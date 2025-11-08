@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisii Market Price Predictor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        /* Base styles */
+        body {
+            transition: background 0.3s, color 0.3s;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            background-color: #f4f5f7; /* Light background */
+            color: #1f2937; /* Dark text */
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            background: rgba(34, 197, 94, 0.9); /* Green */
+            color: white;
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+            z-index: 20;
+            /* Ensures it covers full height */
+            height: 100vh;
+            overflow-y: auto;
+            /* Default state for desktop is open */
+            transform: translateX(0); 
+            width: 16rem; /* w-64 */
+        }
+
+        /* Main content area */
+        .main-content {
+            transition: margin-left 0.3s ease-in-out;
+            margin-left: 16rem; /* lg:ml-64 */
+            width: 100%; /* Default width */
+        }
+        
+        /* State when sidebar is hidden (via JS) */
+        .sidebar.hidden-mobile {
+            transform: translateX(-100%);
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Dark mode styles */
+        .dark body {
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .dark .sidebar {
+            background: rgba(5, 23, 22, 0.9);
+        }
+        .dark .card {
+            background: rgba(31, 41, 55, 0.85);
+            color: #f3f4f6;
+        }
+        .dark select, .dark input {
+            background-color: #1f2937 !important;
+            border-color: #374151 !important;
+            color: #f3f4f6;
+        }
+
+        /* Card styles */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Responsive adjustments for mobile (screen width < 1024px) */
+        @media (max-width: 1023px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%); /* Start hidden on mobile */
+                width: 14rem; /* Slightly narrower on mobile */
+            }
+            .sidebar.active {
+                transform: translateX(0); /* Slide in when active */
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Utility classes (mimicking Tailwind) */
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .gap-6 { gap: 1.5rem; }
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .lg\:col-span-2 { grid-column: span 2 / span 2; }
+        
+        #loadingSpinner { display: none; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flex">
+        <aside id="sidebar" class="sidebar fixed inset-y-0 left-0">
+            <h1 class="text-2xl font-bold mb-8 p-6 pb-0">Kisii Predictor</h1>
+            <nav class="space-y-4 p-6 pt-0">
+                <a href="#dashboard" class="nav-link block text-lg hover:text-gray-200 font-semibold active-link">Dashboard</a>
+                <a href="#analytics" class="nav-link block text-lg hover:text-gray-200">Analytics</a>
+                <a href="#settings" class="nav-link block text-lg hover:text-gray-200">Settings</a>
+                <a href="#about" class="nav-link block text-lg hover:text-gray-200">About</a>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="main-content flex-1 p-6">
+            <header class="flex justify-between items-center mb-6">
+                <button id="menuToggle" class="text-2xl p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">☰</button>
+                <h2 class="text-3xl font-bold ml-4">Dashboard</h2>
+                <button id="themeToggle" class="p-2 font-semibold hover:opacity-80 transition-opacity rounded">
+                    <span class="dark:hidden">🌙</span>
+                    <span class="hidden dark:inline">☀️</span>
+                </button>
+            </header>
+
+            <div class="card mb-8 p-4">
+                <h3 class="text-xl font-semibold mb-3">Live Commodity Search & Controls</h3>
+                <div class="flex flex-wrap gap-4 items-end">
+                    <div class="flex-grow">
+                        <label for="liveSearchInput" class="block font-semibold mb-2 text-sm text-gray-500 dark:text-gray-400">Search Live Commodity Price (e.g., Kisii Tomato Price)</label>
+                        <input type="text" id="liveSearchInput" value="maize" placeholder="e.g., Kisii Beans Price" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700">
+                    </div>
+                    
+                    <button id="fetchBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors h-10">Fetch Live Data</button>
+                    <button id="trainBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition-colors h-10">Train Model</button>
+                </div>
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="card text-center">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Latest Price (Ksh/kg)</p>
+                    <p id="latestPrice" class="text-3xl font-extrabold text-green-600 dark:text-green-400">—</p>
+                </div>
+                <div class="card text-center">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Predicted Price Tomorrow (Ksh/kg)</p>
+                    <p id="nextPrediction" class="text-3xl font-extrabold text-blue-600 dark:text-blue-400">—</p>
+                </div>
+                <div class="card text-center">
+                    <div id="loadingSpinner" class="text-xl font-semibold text-orange-500">⏳ Loading...</div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Current Search Topic</p>
+                    <p id="currentTopic" class="font-bold">—</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="card lg:col-span-2">
+                    <h3 class="text-xl font-semibold mb-4">Price History</h3>
+                    <div style="height: 350px;"><canvas id="historyChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Prediction vs Actual</h3>
+                    <div style="height: 300px;"><canvas id="predictionChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Moving Average (7-day)</h3>
+                    <div style="height: 300px;"><canvas id="movingAvgChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="card mt-6">
+                <h3 class="text-xl font-semibold mb-3">Log</h3>
+                <pre id="log" class="h-32 overflow-y-scroll bg-gray-100 dark:bg-gray-800 p-3 rounded text-sm"></pre>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Utility for DOM selection
+        const $ = id => document.getElementById(id);
+
+        // Application State
+        let state = {
+            running: false,
+            intervalId: null,
+            data: [], 
+            model: null, 
+            windowSize: 8, 
+            scaler: { min: null, max: null },
+            currentCommodity: 'maize'
+        };
+
+        // Chart contexts and instances (Initialization checks are in createCharts)
+        let historyChart, predictionChart, maChart;
+
+        // Helper: Formats a timestamp string/Date object to a readable string
+        const formatDate = d => new Date(d).toLocaleString();
+
+        // Helper: Log messages to the log area
+        function log(msg) {
+            const el = $('log');
+            if (el) {
+                el.textContent = `[${new Date().toLocaleTimeString()}] ${msg}\n` + el.textContent;
+            }
+        }
+
+        // --- UI Initialization and Interaction ---
+
+        const sidebar = $('sidebar');
+        const mainContent = $('mainContent');
+        const menuToggle = $('menuToggle');
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            if (window.innerWidth < 1024) {
+                // Mobile: Use fixed position and active class
+                sidebar.classList.toggle('active');
+            } else {
+                // Desktop: Toggle fixed width and main content margin
+                const isHidden = sidebar.classList.contains('hidden-mobile');
+                sidebar.classList.toggle('hidden-mobile', !isHidden);
+                mainContent.classList.toggle('expanded', !isHidden);
+                mainContent.style.marginLeft = isHidden ? '16rem' : '0';
+            }
+        }
+
+        if (menuToggle) menuToggle.addEventListener('click', toggleSidebar);
+        
+        // Initial setup for desktop view (ensures sidebar is initially visible)
+        window.addEventListener('load', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('active'); // Remove mobile class
+                mainContent.classList.remove('expanded'); // Ensure margin is set
+            } else {
+                // Apply mobile classes on load
+                sidebar.classList.remove('hidden-mobile');
+                mainContent.classList.remove('expanded');
+            }
+        });
+
+
+        // Toggle Dark Mode
+        const themeToggle = $('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+        }
+        
+        // Handle navigation clicks (just logging for this example)
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active-link'));
+                link.classList.add('active-link');
+                log(`Mapsd to: ${link.textContent.trim()}`);
+                // In a real app, this would load different views/content
+                if (window.innerWidth < 1024) toggleSidebar(); // Close sidebar on mobile after click
+            });
+        });
+
+
+        // --- Chart Management ---
+
+        function createCharts() {
+            const historyCtx = $('historyChart') ? $('historyChart').getContext('2d') : null;
+            const predCtx = $('predictionChart') ? $('predictionChart').getContext('2d') : null;
+            const maCtx = $('movingAvgChart') ? $('movingAvgChart').getContext('2d') : null;
+
+            if (!historyCtx || !predCtx || !maCtx) {
+                log('Chart contexts not found. Check HTML IDs.');
+                return;
+            }
+
+            if (historyChart) historyChart.destroy();
+            if (predictionChart) predictionChart.destroy();
+            if (maChart) maChart.destroy();
+
+            historyChart = new Chart(historyCtx, {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Price (Ksh/kg)', data: [], tension: 0.3, fill: false, borderColor: '#22c55e' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            predictionChart = new Chart(predCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: 'Actual', data: [], tension: 0.3, fill: false, borderColor: '#3b82f6' },
+                        { label: 'Predicted', data: [], tension: 0.3, fill: false, borderDash: [6, 4], borderColor: '#ef4444' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            maChart = new Chart(maCtx, {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: '7-day MA', data: [], tension: 0.3, fill: false, borderColor: '#f97316' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+        createCharts();
+
+        function updateHistoryChart() {
+            if (!historyChart) return;
+            const prices = state.data.map(d => d.price);
+            const labels = state.data.map(d => new Date(d.timestamp).toLocaleDateString());
+            historyChart.data.labels = labels;
+            historyChart.data.datasets[0].data = prices;
+            historyChart.update();
+        }
+
+        function updateMovingAverageChart() {
+            if (!maChart) return;
+            const prices = state.data.map(d => d.price);
+            const labels = state.data.map(d => new Date(d.timestamp).toLocaleDateString());
+            const ma = prices.map((_, idx, arr) => 
+                idx < 6 ? null : arr.slice(idx - 6, idx + 1).reduce((a, b) => a + b, 0) / 7
+            );
+            maChart.data.labels = labels;
+            maChart.data.datasets[0].data = ma;
+            maChart.update();
+        }
+
+        async function updatePredictionChart(predictions = []) {
+            if (!predictionChart) return;
+            const labels = state.data.map(d => new Date(d.timestamp).toLocaleDateString());
+            predictionChart.data.labels = labels;
+            predictionChart.data.datasets[0].data = state.data.map(d => d.price);
+
+            if (predictions.length > 0) {
+                // Pad predictions so they align with the last day of historical data
+                const actualLen = state.data.length;
+                const predictionStart = actualLen - predictions.length;
+                const paddedPredictions = new Array(predictionStart < 0 ? 0 : predictionStart).fill(null).concat(predictions);
+                predictionChart.data.datasets[1].data = paddedPredictions.slice(0, actualLen);
+            } else {
+                 predictionChart.data.datasets[1].data = new Array(state.data.length).fill(null);
+            }
+            predictionChart.update();
+        }
+
+        // --- Data Handling and Prediction Logic ---
+
+        function normalize(data) {
+            const prices = data.map(d => d.price);
+            state.scaler.min = Math.min(...prices);
+            state.scaler.max = Math.max(...prices);
+            const range = state.scaler.max - state.scaler.min;
+            return data.map(d => (d.price - state.scaler.min) / range);
+        }
+        
+        function denormalize(normalizedPrice) {
+             const range = state.scaler.max - state.scaler.min;
+             return (normalizedPrice * range) + state.scaler.min;
+        }
+        
+        // ENHANCED Simulated data generation to be responsive to the search query
+        function seedSimData(query = 'maize') {
+            const key = query.toLowerCase().includes('beans') ? 'beans'
+                      : query.toLowerCase().includes('sugar') ? 'sugar'
+                      : query.toLowerCase().includes('potato') ? 'potato'
+                      : query.toLowerCase().includes('tomato') ? 'tomato'
+                      : 'maize';
+            
+            // Base prices are now slightly randomized to simulate dynamic market changes
+            const baseMap = { maize: 45, beans: 120, sugar: 150, potato: 35, tomato: 90 };
+            const base = baseMap[key] || 50;
+
+            const arr = [];
+            const now = Date.now();
+            const days = 90; // Generate 90 days of history
+
+            for (let i = days; i >= 0; i--) { 
+                const t = new Date(now - i * 24 * 60 * 60 * 1000).toISOString();
+                // Complex noise: Seasonal sine wave + random market fluctuation + slight inflation trend
+                const noise = (Math.sin(i / 15) * 8) + (Math.random() * 6 - 3); 
+                arr.push({ 
+                    timestamp: t, 
+                    commodity: key, 
+                    price: Math.max(5, +(base + noise + i * 0.05).toFixed(2)) 
+                });
+            }
+            return arr;
+        }
+
+        function setDataForCommodity(fullData, commodity) {
+            const filtered = fullData
+                .filter(d => d.commodity === commodity)
+                .map(d => ({ timestamp: d.timestamp, price: +d.price }));
+            
+            filtered.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            state.data = filtered.slice(-100); // Keep last 100 points
+        }
+
+        // --- Main Data Fetching and Updating ---
+
+        async function fetchData() {
+            const searchQuery = $('liveSearchInput').value.trim() || 'maize';
+            state.currentCommodity = searchQuery;
+
+            $('loadingSpinner').style.display = 'block';
+            $('currentTopic').textContent = searchQuery;
+            
+            log(`Searching for: ${searchQuery}...`);
+            
+            // SIMULATION of API call:
+            await new Promise(r => setTimeout(r, 1500)); // Simulate 1.5s network delay
+            let fetched = seedSimData(searchQuery);
+
+            // REAL API INTEGRATION NOTE:
+            // For a real app, you would need a SERVER to fetch this data from Google's Knowledge Graph 
+            // or a dedicated market data provider (e.g., Nasdaq, Bloomberg) as front-end code cannot 
+            // securely or reliably call Google Search APIs without complex backend proxying.
+            log(`Successfully simulated live data for ${searchQuery}.`);
+
+            // Process data
+            setDataForCommodity(fetched, 'maize'); // Note: Simulation uses 'maize' as the key commodity for chart consistency
+            
+            const latest = state.data[state.data.length - 1];
+            if (latest) {
+                $('latestPrice').textContent = `${latest.price.toFixed(2)} (${formatDate(latest.timestamp).split(',')[0]})`;
+            } else {
+                 $('latestPrice').textContent = '—';
+            }
+
+            // Update UI elements
+            $('loadingSpinner').style.display = 'none';
+            updateHistoryChart();
+            updateMovingAverageChart();
+            
+            if (state.model) {
+                await predictNext(true); 
+            } else {
+                 $('nextPrediction').textContent = 'N/A (Train Model)';
+                 await updatePredictionChart();
+            }
+        }
+        
+        // --- Model Training and Prediction ---
+        
+        async function trainModel() {
+             if (state.data.length < state.windowSize) {
+                 log(`Insufficient data for training. Need at least ${state.windowSize} points.`);
+                 return;
+             }
+             log('Starting model training...');
+             $('trainBtn').textContent = 'Training...';
+             $('trainBtn').disabled = true;
+             
+             // Placeholder for normalization and preparing data sequences
+             const normalizedData = normalize(state.data); 
+             
+             // Simulate training time
+             await new Promise(r => setTimeout(r, 2500)); 
+             state.model = { status: 'trained', priceRange: state.scaler }; // Store scaler with model
+             
+             log('Model training complete. Ready for future prediction.');
+             $('trainBtn').textContent = 'Train Model';
+             $('trainBtn').disabled = false;
+             
+             await predictNext(false); 
+        }
+        
+        // Predicts the next few days/points and updates the chart
+        async function predictNext(isLive = true) {
+            if (!state.model) {
+                if (isLive) log('Model not trained. Please click "Train Model" first.');
+                return;
+            }
+            
+            // 1. Get the last data points
+            const lastData = state.data.slice(-state.windowSize).map(d => d.price);
+            
+            // 2. Advanced Placeholder Prediction Logic: Forecast next 10 days
+            const forecastDays = 10;
+            const predictions = [];
+            
+            // Simple Linear Regression on the last 15 points to find trend
+            const recentPrices = state.data.slice(-15).map(d => d.price);
+            const avgPrice = recentPrices.reduce((a, b) => a + b, 0) / recentPrices.length;
+            const trend = (recentPrices[recentPrices.length - 1] - recentPrices[0]) / (recentPrices.length - 1);
+
+            let currentForecastPrice = lastData[lastData.length - 1];
+
+            for (let i = 1; i <= forecastDays; i++) {
+                // Prediction = Last Price + Trend * i + dampened noise
+                const noiseFactor = (Math.random() * 1.5) - 0.75;
+                currentForecastPrice += trend + (noiseFactor * (i * 0.1)); // Trend contribution increases, noise dampens
+                
+                // Keep price within a reasonable band of the average
+                currentForecastPrice = Math.min(state.scaler.max * 1.05, currentForecastPrice);
+                currentForecastPrice = Math.max(state.scaler.min * 0.95, currentForecastPrice);
+
+                predictions.push(+currentForecastPrice.toFixed(2));
+            }
+
+            // Update display
+            $('nextPrediction').textContent = predictions[0].toFixed(2);
+            log(`Predicted price tomorrow: ${predictions[0].toFixed(2)}`);
+            
+            // Update prediction chart: Show the last 15 actual points + 10 forecast points
+            const chartPredictions = state.data.slice(-15).map(d => d.price).concat(predictions);
+            await updatePredictionChart(chartPredictions);
+        }
+        
+        // --- Event Listeners ---
+        
+        const fetchBtn = $('fetchBtn');
+        const trainBtn = $('trainBtn');
+        
+        if (fetchBtn) fetchBtn.addEventListener('click', fetchData);
+        if (trainBtn) trainBtn.addEventListener('click', trainModel);
+        
+        // Initial load
+        fetchData(); 
+    </script>
+</body>
+</html>

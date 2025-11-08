@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspirational Quote Generator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the app container */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        /* Specific style for the quote block, ensuring smooth transition */
+        #quote-container {
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Custom button styling for a modern look and better touch target */
+        .action-button {
+            transition: all 0.2s ease-out;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px #4f46e5; /* Static shadow */
+        }
+        .action-button:hover {
+            box-shadow: 0 6px #4f46e5;
+            transform: translateY(-2px);
+        }
+        .action-button:active {
+            box-shadow: 0 0 #4f46e5;
+            transform: translateY(4px);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary-indigo': '#6366f1',
+                        'primary-indigo-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <main class="w-full max-w-lg mx-auto">
+        <div id="quote-container" class="bg-white p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl border border-gray-100 transform hover:scale-[1.01] transition duration-300 ease-in-out">
+            
+            <div class="flex justify-center mb-6">
+                <!-- Inline SVG for a clean quote icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-primary-indigo">
+                    <path d="M10 11H7a4 4 0 1 0 0 8h4a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z"></path>
+                    <path d="M20 11h-3a4 4 0 1 0 0 8h4a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z"></path>
+                </svg>
+            </div>
+
+            <!-- Quote Text -->
+            <blockquote class="text-2xl sm:text-3xl font-serif font-light text-gray-800 italic leading-snug mb-6" id="quote-text">
+                "The only way to do great work is to love what you do."
+            </blockquote>
+
+            <!-- Author -->
+            <p class="text-right text-base sm:text-lg font-medium text-primary-indigo" id="quote-author">
+                — Steve Jobs
+            </p>
+
+            <div class="h-px bg-gray-200 my-8"></div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-4">
+                
+                <button id="new-quote-btn" class="action-button flex-1 px-4 py-3 bg-primary-indigo text-white font-semibold rounded-xl text-lg hover:bg-primary-indigo-dark active:scale-[0.98]">
+                    Generate New Quote
+                </button>
+
+                <button id="copy-btn" class="action-button flex-1 sm:flex-none px-4 py-3 bg-white text-primary-indigo border-2 border-primary-indigo font-semibold rounded-xl text-lg hover:bg-primary-indigo-dark hover:text-white active:scale-[0.98]">
+                    Copy Text
+                </button>
+            </div>
+            
+            <!-- Notification Area (for copy confirmation) -->
+            <div id="notification" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 p-3 bg-green-500 text-white rounded-lg shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none">
+                Quote copied to clipboard!
+            </div>
+            
+        </div>
+        
+    </main>
+
+    <script>
+        // Data Store (A local array of quotes)
+        const quotes = [
+            { text: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+            { text: "Strive not to be a success, but rather to be of value.", author: "Albert Einstein" },
+            { text: "The mind is everything. What you think you become.", author: "Buddha" },
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
+            { text: "The journey of a thousand miles begins with a single step.", author: "Lao Tzu" },
+            { text: "That which does not kill us makes us stronger.", author: "Friedrich Nietzsche" },
+            { text: "Hardships often prepare ordinary people for an extraordinary destiny.", author: "C.S. Lewis" },
+            { text: "It is not the strongest of the species that survives, nor the most intelligent that survives. It is the one that is most adaptable to change.", author: "Charles Darwin" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" }
+        ];
+
+        // DOM Elements
+        const quoteTextElement = document.getElementById('quote-text');
+        const quoteAuthorElement = document.getElementById('quote-author');
+        const newQuoteBtn = document.getElementById('new-quote-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const notificationElement = document.getElementById('notification');
+        const quoteContainer = document.getElementById('quote-container');
+
+        // State to track the currently displayed quote
+        let currentQuote = quotes[3]; // Initialize with the default one
+
+        /**
+         * Selects a random quote from the array.
+         * @returns {object} A quote object with text and author.
+         */
+        function getRandomQuote() {
+            let randomIndex;
+            let newQuote;
+            
+            // Ensure the new quote is different from the current one
+            do {
+                randomIndex = Math.floor(Math.random() * quotes.length);
+                newQuote = quotes[randomIndex];
+            } while (newQuote === currentQuote && quotes.length > 1);
+
+            return newQuote;
+        }
+
+        /**
+         * Updates the DOM with the new quote, adding a subtle visual effect.
+         * @param {object} quote - The quote object to display.
+         */
+        function displayQuote(quote) {
+            currentQuote = quote;
+            
+            // 1. Hide current quote temporarily for a fade-out effect
+            quoteContainer.classList.add('opacity-0', 'translate-y-2');
+            
+            // 2. Wait for the transition to finish, then update content and fade in
+            setTimeout(() => {
+                quoteTextElement.textContent = `"${quote.text}"`;
+                quoteAuthorElement.textContent = `— ${quote.author}`;
+                
+                // 3. Fade in the new quote
+                quoteContainer.classList.remove('opacity-0', 'translate-y-2');
+            }, 300); // Duration matches the CSS transition time
+        }
+
+        /**
+         * Copies the current quote text and author to the clipboard.
+         * Uses the document.execCommand('copy') fallback for better cross-environment compatibility.
+         */
+        function copyQuoteToClipboard() {
+            const fullQuote = `${currentQuote.text}\n— ${currentQuote.author}`;
+            
+            // Create a temporary textarea element
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = fullQuote;
+            document.body.appendChild(tempTextarea);
+            
+            // Select and copy the text
+            tempTextarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification();
+                } else {
+                    console.error('Copy command failed.');
+                }
+            } catch (err) {
+                console.error('Unable to copy', err);
+            }
+            
+            // Clean up the temporary element
+            document.body.removeChild(tempTextarea);
+        }
+
+        /**
+         * Shows a temporary notification confirming the copy action.
+         */
+        function showNotification() {
+            // Ensure any existing timeout is cleared
+            clearTimeout(notificationElement.timeoutId);
+
+            notificationElement.classList.remove('opacity-0');
+            notificationElement.classList.add('opacity-100');
+            
+            // Automatically hide after 3 seconds
+            notificationElement.timeoutId = setTimeout(() => {
+                notificationElement.classList.remove('opacity-100');
+                notificationElement.classList.add('opacity-0');
+            }, 3000);
+        }
+
+        /**
+         * Initializes event listeners.
+         */
+        function initialize() {
+            newQuoteBtn.addEventListener('click', () => {
+                const newQuote = getRandomQuote();
+                displayQuote(newQuote);
+            });
+
+            copyBtn.addEventListener('click', copyQuoteToClipboard);
+        }
+
+        // Wait for the window to load completely before running initialization
+        window.onload = initialize;
+    </script>
+
+</body>
+</html>

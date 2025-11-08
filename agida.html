@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Agida Digital Library Hub 📘</title>
+    <style>
+        /* Base styles and variables */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --header-bg: #e9ecef;
+            --max-width: 1200px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: white;
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Utility & Spacing */
+        .mb-3 { margin-bottom: 1rem; }
+        .mt-3 { margin-top: 1rem; }
+
+        /* Header & Navigation */
+        header {
+            background-color: var(--header-bg);
+            padding: 1rem 0;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 15px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        nav {
+            display: flex;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-buttons button, .nav-buttons a {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.1s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .nav-btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        /* Main Content Layout */
+        main {
+            flex-grow: 1;
+            max-width: var(--max-width);
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .content-section {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--header-bg);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        /* Utility classes */
+        .info-box, .error-box, .success-box {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .info-box { background-color: #e0f7fa; border-left: 5px solid #00bcd4; }
+        .error-box { background-color: #fce4e4; border-left: 5px solid var(--danger-color); }
+        .success-box { background-color: #e8f5e9; border-left: 5px solid var(--success-color); }
+
+        /* Forms & Inputs */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        button.btn-submit {
+            background-color: var(--success-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* Library Specific */
+        #library-search-panel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        #library-search-panel input, #library-search-panel select {
+            flex-grow: 1;
+            min-width: 150px;
+        }
+
+        #library-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .book-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: row; /* Ensure horizontal layout */
+            align-items: flex-start;
+        }
+        
+        .book-card img {
+            width: 100px; 
+            height: 150px; 
+            object-fit: cover; 
+            margin-right: 15px;
+            flex-shrink: 0;
+            border-radius: 4px;
+        }
+        
+        .book-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+        
+        .book-details h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--dark-text);
+        }
+
+        .load-more-btn {
+            display: block;
+            width: 50%;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Exams Specific */
+        #exams-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        #exams-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+
+        .exam-item-paid {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-text);
+            color: white;
+            padding: 20px 0;
+            margin-top: 30px;
+        }
+
+        .footer-content {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 15px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer-content a {
+            color: #ccc;
+            margin: 0 5px;
+            text-decoration: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto; /* Adjusted margin for better centering */
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav {
+                width: 100%;
+                margin-top: 10px;
+                justify-content: flex-start;
+            }
+            .nav-buttons {
+                justify-content: space-between;
+                width: 100%;
+            }
+            #library-search-panel {
+                flex-direction: column;
+            }
+            .book-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .book-card img {
+                margin: 0 0 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="app-sound" preload="auto">
+        <source src="data:audio/mpeg;base64,SUQzBAAAAAABVVhNTFRYWWw6iR...[...REST OF BASE64 DATA...]" type="audio/mpeg">
+        <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YAAAAA...[...REST OF BASE64 DATA...]" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
+    <header>
+        <div class="header-content">
+            <h1 id="app-title">📚Agida Digital Library Hub📘</h1>
+            <nav>
+                <div class="nav-buttons">
+                    <button class="nav-btn-secondary nav-link-btn" data-section="about">About Us</button>
+                    <button class="nav-btn-secondary nav-link-btn" data-section="library">Library</button>
+                    <button class="nav-btn-secondary nav-link-btn" data-section="exams">Exams</button>
+                    <button class="nav-btn-secondary nav-link-btn" data-section="classroom">Live Classroom</button>
+                    <button class="nav-btn-secondary nav-link-btn" data-section="ai-dictionary">AI & Dictionary</button>
+                    <button id="signInBtn" class="nav-btn-primary modal-open-btn" data-modal="signInModal">Sign In</button>
+                    <button id="signUpBtn" class="nav-btn-primary modal-open-btn" data-modal="signUpModal">Sign Up</button>
+                    <button id="signOutBtn" class="nav-btn-primary" style="display:none;">Sign Out</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="content-section active">
+            <h2>Welcome to Agida Digital Library Hub</h2>
+            <p>Dive into our vast collection of books, practice exams, and connect with teachers in the live classroom.</p>
+
+            <div id="user-dashboard" style="display:none;" class="mt-3">
+                <h3 id="welcome-message"></h3>
+                <div class="info-box" id="user-details-box"></div>
+
+                <div id="admin-teacher-actions" style="display:none;" class="mt-3">
+                    <h3>Management Panel</h3>
+                    <div class="nav-buttons">
+                         <button class="nav-btn-primary toggle-visibility-btn" data-target="add-ebook-form">Add Ebook</button>
+                         <button class="nav-btn-primary toggle-visibility-btn" data-target="create-exam-form">Create Exam</button>
+                         <button class="nav-btn-primary toggle-visibility-btn" data-target="create-room-form">Create Live Room</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="error-box mt-3">
+                <strong>INSECURE DEMO NOTICE:</strong> This application is entirely **client-side**. User authentication, library entries, and payments are stored insecurely in your browser's **localStorage** for demonstration purposes only. For Admin access, use the secret code: **@Admin0319** during sign-in.
+            </div>
+        </section>
+        
+        <section id="library" class="content-section">
+            <h2>📚 Digital Library: Millions of Resources</h2>
+
+            <div id="admin-add-ebook" class="mb-3">
+                <form id="add-ebook-form" class="content-section" style="display:none; padding: 15px; background-color: var(--light-bg);">
+                    <h3>Add Local Ebook (Admin/Teacher Only)</h3>
+                    <div class="form-group"><label for="local-title">Title</label><input type="text" id="local-title" required></div>
+                    <div class="form-group"><label for="local-author">Author</label><input type="text" id="local-author" required></div>
+                    <div class="form-group"><label for="local-pdf">PDF/Link URL</label><input type="url" id="local-pdf" required></div>
+                    <button type="submit" class="btn-submit">Add Book</button>
+                </form>
+            </div>
+            
+            <div id="library-search-panel">
+                <input type="text" id="book-search" placeholder="Enter title, author, or keyword...">
+                <select id="search-filter">
+                    <option value="all">All Fields</option>
+                    <option value="title">Title Only</option>
+                    <option value="author">Author Only</option>
+                    <option value="subject">Subject</option>
+                </select>
+                <select id="search-category">
+                    <option value="">All Categories</option>
+                    <option value="fiction">Fiction</option>
+                    <option value="science">Science</option>
+                    <option value="history">History</option>
+                    <option value="math">Mathematics</option>
+                    <option value="language">Language Arts</option>
+                </select>
+                <button class="btn-submit" id="execute-search-btn">Search</button>
+            </div>
+
+            <div id="library-status" class="info-box">Enter a search query or see locally cached books below.</div>
+
+            <div id="library-results"></div>
+            
+            <button id="load-more-btn" class="load-more-btn" style="display:none;">Load More Results</button>
+        </section>
+
+        <section id="exams" class="content-section">
+            <h2>📝 Exams & Practice Tests</h2>
+
+            <div id="teacher-create-exam" class="mb-3">
+                <form id="create-exam-form" class="content-section" style="display:none; padding: 15px; background-color: var(--light-bg);">
+                    <h3>Create New Exam (Admin/Teacher Only)</h3>
+                    <div class="form-group"><label for="exam-title">Title</label><input type="text" id="exam-title" required></div>
+                    <div class="form-group"><label for="exam-subject">Subject</label><input type="text" id="exam-subject" required></div>
+                    <div class="form-group"><label for="exam-pdf">PDF/Link URL</label><input type="url" id="exam-pdf" required></div>
+                    <div class="form-group">
+                        <label for="exam-price">Price (KSH) - Set 0 for Free</label>
+                        <input type="number" id="exam-price" min="0" value="0" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Create Exam</button>
+                </form>
+            </div>
+
+            <h3>Available Exams</h3>
+            <p class="error-box">
+                <strong>Payment Warning:</strong> The ability to download paid exams requires a secure server-side payment system (e.g., M-Pesa API integration). This demo only displays a placeholder prompt.
+            </p>
+            <ul id="exams-list"></ul>
+        </section>
+        
+        <section id="classroom" class="content-section">
+            <h2>💬 Live Classroom Simulation</h2>
+            <p class="info-box">See V1 code for full classroom simulation features (chat, rooms).</p>
+        </section>
+        
+        <section id="ai-dictionary" class="content-section">
+            <h2>🧠 AI & Dictionary Tools</h2>
+            <p class="info-box">See V1 code for AI/Dictionary full implementation. Requires API keys/proxies.</p>
+        </section>
+        
+        <section id="about" class="content-section">
+            <h2>🌍 About Agida Digital Library Hub</h2>
+            <h3>Contact Us</h3>
+            <ul style="list-style: none; padding-left: 0;">
+                <li>📧 <strong>Email:</strong> <a href="mailto:kangogomartin023@gmail.com">kangogomartin023@gmail.com</a></li>
+                <li>📞 <strong>Phone:</strong> <a href="tel:+254726570029">0726570029</a></li>
+                <li>🟢 <strong>WhatsApp:</strong> <a href="https://wa.me/254726570029" target="_blank">Chat on WhatsApp</a></li>
+            </ul>
+        </section>
+        
+    </main>
+
+    <div id="signInModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn modal-close-btn">&times;</span>
+            <h2>Sign In</h2>
+            <form id="signInForm">
+                <div class="form-group">
+                    <label for="signin-email">Email</label>
+                    <input type="email" id="signin-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signin-password">Password</label>
+                    <input type="password" id="signin-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signin-secret">Admin Secret (Optional)</label>
+                    <input type="password" id="signin-secret">
+                </div>
+                <button type="submit" class="btn-submit">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="signUpModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn modal-close-btn">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="signUpForm">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-role">Role</label>
+                    <select id="signup-role">
+                        <option value="Student">Student</option>
+                        <option value="Teacher">Teacher</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signup-level">Level (for Students)</label>
+                    <input type="text" id="signup-level" placeholder="e.g., Form 4">
+                </div>
+                <button type="submit" class="btn-submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn modal-close-btn">&times;</span>
+            <h2 id="payment-title"></h2>
+            <p class="error-box">
+                <strong>INSECURE DEMO:</strong> This is only a <strong>SIMULATION</strong> of a payment request. To implement real M-Pesa or mobile money payment, you <strong>MUST</strong> use a secure server-side API integration.
+            </p>
+            <p>To purchase this exam for <strong id="payment-price"></strong>, please send the amount to:</p>
+            <h3>📞 M-Pesa Number: 0726570029</h3>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="transaction-code">Enter Simulated Transaction Code (e.g., ABC123DEF)</label>
+                    <input type="text" id="transaction-code" required>
+                </div>
+                <button type="submit" class="btn-submit">Complete Purchase (Simulated)</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2023 Agida Digital Library Hub. All rights reserved. | <a href="#" class="nav-link-btn" data-section="about">About</a> | <a href="#">Terms</a></p>
+            <p>Made by an expert developer for educational demo purposes.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Use an IIFE (Immediately Invoked Function Expression) to prevent global scope pollution
+        (function() {
+            // --- CONSTANTS & CONFIGURATION ---
+            
+            const STORAGE_KEY_USERS = 'agida_users';
+            const STORAGE_KEY_LOGGED_IN_USER = 'agida_logged_in_user';
+            const STORAGE_KEY_LOCAL_BOOKS = 'agida_local_books';
+            const STORAGE_KEY_EXAMS = 'agida_exams';
+            const STORAGE_KEY_PURCHASES = 'agida_purchases';
+            const ADMIN_SECRET_CODE = '@Admin0319';
+            
+            // API Configuration
+            const MAX_RESULTS_OL = 10; // Reduced for demo speed
+            const MAX_RESULTS_GB = 10; // Reduced for demo speed
+            const OPEN_LIBRARY_API = `https://openlibrary.org/search.json?limit=${MAX_RESULTS_OL}&q=`;
+            const GOOGLE_BOOKS_API_BASE = `https://www.googleapis.com/books/v1/volumes?maxResults=${MAX_RESULTS_GB}&q=`;
+            const GOOGLE_BOOKS_API_KEY = 'YOUR_GOOGLE_BOOKS_API_KEY'; // Placeholder!
+
+            // State Management
+            let currentQuery = '';
+            let currentPageOL = 0;
+            let currentPageGB = 0;
+            let currentExamIdForPayment = null;
+            let isSearching = false;
+
+            // --- CACHED DOM ELEMENTS ---
+            const DOM = {
+                sections: document.querySelectorAll('.content-section'),
+                libraryResults: document.getElementById('library-results'),
+                libraryStatus: document.getElementById('library-status'),
+                loadMoreBtn: document.getElementById('load-more-btn'),
+                
+                // Forms and Inputs
+                signInForm: document.getElementById('signInForm'),
+                signUpForm: document.getElementById('signUpForm'),
+                addEbookForm: document.getElementById('add-ebook-form'),
+                createExamForm: document.getElementById('create-exam-form'),
+                paymentForm: document.getElementById('paymentForm'),
+
+                // Auth UI
+                signInBtn: document.getElementById('signInBtn'),
+                signUpBtn: document.getElementById('signUpBtn'),
+                signOutBtn: document.getElementById('signOutBtn'),
+                userDashboard: document.getElementById('user-dashboard'),
+                adminActions: document.getElementById('admin-teacher-actions'),
+                welcomeMessage: document.getElementById('welcome-message'),
+                userDetailsBox: document.getElementById('user-details-box'),
+
+                // Search Inputs
+                bookSearchInput: document.getElementById('book-search'),
+                searchFilter: document.getElementById('search-filter'),
+                searchCategory: document.getElementById('search-category'),
+            };
+
+            // --- UTILITY & STORAGE FUNCTIONS ---
+
+            function getStorageItem(key, defaultValue = []) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch (e) {
+                    console.error(`Error reading localStorage key ${key}:`, e);
+                    return defaultValue;
+                }
+            }
+
+            function setStorageItem(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                } catch (e) {
+                    console.error(`Error writing to localStorage key ${key}:`, e);
+                }
+            }
+            
+            function generateUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
+            function showSection(sectionId) {
+                DOM.sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+                window.scrollTo(0, 0);
+            }
+
+            function openModal(modalId) {
+                document.getElementById(modalId).style.display = 'flex'; // Use flex for better vertical centering
+            }
+
+            function closeModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+
+            function toggleVisibility(elementId) {
+                const element = document.getElementById(elementId);
+                element.style.display = element.style.display === 'none' ? 'block' : 'none';
+            }
+            
+            // --- AUTHENTICATION FUNCTIONS ---
+
+            function updateUI() {
+                const user = getStorageItem(STORAGE_KEY_LOGGED_IN_USER, null);
+                
+                DOM.signInBtn.style.display = user ? 'none' : 'inline-block';
+                DOM.signUpBtn.style.display = user ? 'none' : 'inline-block';
+                DOM.signOutBtn.style.display = user ? 'inline-block' : 'none';
+                DOM.userDashboard.style.display = user ? 'block' : 'none';
+
+                if (user) {
+                    DOM.welcomeMessage.textContent = `Welcome, ${user.name}!`;
+                    DOM.userDetailsBox.innerHTML = `
+                        <strong>Role:</strong> ${user.role} ${user.level ? ` | Level: ${user.level}` : ''}
+                    `;
+                    
+                    const canManage = user.isAdmin || user.role === 'Teacher';
+                    DOM.adminActions.style.display = canManage ? 'block' : 'none';
+                }
+                
+                // Re-render exams to update purchase status
+                renderExams();
+            }
+
+            function signIn(event) {
+                event.preventDefault();
+                
+                const email = document.getElementById('signin-email').value;
+                const password = document.getElementById('signin-password').value;
+                const secret = document.getElementById('signin-secret').value;
+                
+                const users = getStorageItem(STORAGE_KEY_USERS);
+                // NOTE: Base64 encoding is NOT secure hashing, just a reversible stub for demo.
+                const user = users.find(u => u.email === email && u.passwordEncodedStub === btoa(password));
+                
+                if (user) {
+                    user.isAdmin = secret === ADMIN_SECRET_CODE;
+                    
+                    setStorageItem(STORAGE_KEY_LOGGED_IN_USER, user);
+                    updateUI();
+                    closeModal('signInModal');
+                    DOM.signInForm.reset();
+                    alert(`Sign in successful! Role: ${user.isAdmin ? 'Admin' : user.role}`);
+                } else {
+                    alert('Invalid credentials. Please try again.');
+                }
+            }
+
+            function signUp(event) {
+                event.preventDefault();
+
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const role = document.getElementById('signup-role').value;
+                const level = document.getElementById('signup-level').value;
+                
+                const users = getStorageItem(STORAGE_KEY_USERS);
+                
+                if (users.some(u => u.email === email)) {
+                    alert('User with this email already exists.');
+                    return;
+                }
+                
+                const newUser = {
+                    id: generateUUID(),
+                    name: name,
+                    email: email,
+                    // Use passwordEncodedStub instead of HashStub for clarity on insecurity
+                    passwordEncodedStub: btoa(password), 
+                    role: role,
+                    level: role === 'Student' ? level : null,
+                    isAdmin: false
+                };
+                
+                users.push(newUser);
+                setStorageItem(STORAGE_KEY_USERS, users);
+                
+                alert('Account created successfully! Please sign in.');
+                closeModal('signUpModal');
+                DOM.signUpForm.reset();
+            }
+
+            function signOut() {
+                setStorageItem(STORAGE_KEY_LOGGED_IN_USER, null);
+                updateUI();
+                alert('You have been signed out.');
+            }
+
+            // --- LIBRARY FUNCTIONS ---
+            
+            function startNewBookSearch() {
+                currentQuery = DOM.bookSearchInput.value.trim();
+                
+                // If query is empty, just show local books on first page
+                if (!currentQuery) {
+                    currentPageOL = 0;
+                    currentPageGB = 0;
+                    renderBookResults(getStorageItem(STORAGE_KEY_LOCAL_BOOKS), true);
+                    DOM.libraryStatus.textContent = 'Enter a search query or see locally cached books below.';
+                    DOM.loadMoreBtn.style.display = 'none';
+                    return;
+                }
+
+                // Reset pagination and results for a new search
+                currentPageOL = 0;
+                currentPageGB = 0;
+                DOM.libraryResults.innerHTML = '';
+                DOM.libraryStatus.textContent = 'Starting search...';
+                DOM.loadMoreBtn.style.display = 'none';
+                isSearching = true;
+
+                loadMoreBooks();
+            }
+
+            async function loadMoreBooks() {
+                if (isSearching) return;
+                isSearching = true;
+
+                const filter = DOM.searchFilter.value;
+                const category = DOM.searchCategory.value;
+                let combinedResults = [];
+                
+                DOM.libraryStatus.textContent = `Fetching results for page ${currentPageOL + 1}...`;
+
+                // 1. Add Local/Admin-Added Books (Only on first load, page 0)
+                if (currentPageOL === 0) {
+                    const localBooks = getStorageItem(STORAGE_KEY_LOCAL_BOOKS);
+                    combinedResults.push(...localBooks);
+                }
+
+                const apiCalls = [];
+
+                // --- Open Library Fetch Promise ---
+                const olPromise = async () => {
+                    let olOffset = currentPageOL * MAX_RESULTS_OL;
+                    let olQuery = currentQuery;
+                    
+                    if (filter === 'author') olQuery = `author:${olQuery}`;
+                    else if (filter === 'title') olQuery = `title:${olQuery}`;
+                    else if (filter === 'subject') olQuery = `subject:${olQuery}`;
+
+                    if (category) olQuery += ` subject:${category}`;
+
+                    const olResponse = await fetch(`${OPEN_LIBRARY_API}${encodeURIComponent(olQuery)}&offset=${olOffset}`);
+                    if (!olResponse.ok) throw new Error('Open Library Network Error');
+                    
+                    const olData = await olResponse.json();
+                    
+                    if (olData && olData.docs) {
+                        currentPageOL++;
+                        return olData.docs.map(doc => ({
+                            id: `ol-${doc.key}`,
+                            source: 'Open Library',
+                            title: doc.title,
+                            author: doc.author_name ? doc.author_name.join(', ') : 'Unknown Author',
+                            year: doc.first_publish_year || 'N/A',
+                            link: `https://openlibrary.org${doc.key}`,
+                            cover: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` : 'https://via.placeholder.com/100x150?text=No+Cover',
+                        }));
+                    }
+                    return [];
+                };
+                apiCalls.push(olPromise());
+
+                // --- Google Books Fetch Promise ---
+                if (GOOGLE_BOOKS_API_KEY !== 'YOUR_GOOGLE_BOOKS_API_KEY' && currentQuery) {
+                    const gbPromise = async () => {
+                        let gbStartIndex = currentPageGB * MAX_RESULTS_GB;
+                        const gbResponse = await fetch(`${GOOGLE_BOOKS_API_BASE}${encodeURIComponent(currentQuery)}&startIndex=${gbStartIndex}&key=${GOOGLE_BOOKS_API_KEY}`);
+                        if (!gbResponse.ok) throw new Error('Google Books Network Error');
+                        
+                        const gbData = await gbResponse.json();
+
+                        if (gbData && gbData.items) {
+                            currentPageGB++;
+                            return gbData.items.map(item => ({
+                                id: `gb-${item.id}`,
+                                source: 'Google Books',
+                                title: item.volumeInfo.title,
+                                author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
+                                year: item.volumeInfo.publishedDate ? item.volumeInfo.publishedDate.substring(0, 4) : 'N/A',
+                                link: item.volumeInfo.previewLink || item.volumeInfo.infoLink,
+                                cover: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/100x150?text=No+Cover',
+                            }));
+                        }
+                        return [];
+                    };
+                    apiCalls.push(gbPromise());
+                }
+                
+                // Use Promise.allSettled to handle successes and failures independently
+                const results = await Promise.allSettled(apiCalls);
+                let successfulApiResultsCount = 0;
+
+                results.forEach(res => {
+                    if (res.status === 'fulfilled') {
+                        combinedResults.push(...res.value);
+                        if (res.value.length > 0) successfulApiResultsCount++;
+                    } else {
+                        console.error('An API call failed:', res.reason);
+                        DOM.libraryStatus.textContent += ` (Warning: One API failed: ${res.reason.message || res.reason})`;
+                    }
+                });
+
+                // 4. Render and Update UI
+                renderBookResults(combinedResults);
+                
+                // Show Load More button if we got results from APIs
+                if (successfulApiResultsCount > 0) {
+                     DOM.loadMoreBtn.style.display = 'block';
+                } else {
+                     DOM.loadMoreBtn.style.display = 'none';
+                }
+                
+                DOM.libraryStatus.textContent = `Displaying ${DOM.libraryResults.children.length} results so far.`;
+                isSearching = false;
+            }
+
+            function renderBookResults(books, isNewSearch = false) {
+                if (isNewSearch) {
+                     DOM.libraryResults.innerHTML = '';
+                }
+
+                // Use a Set for faster duplicate checking based on title
+                const existingTitles = new Set(Array.from(DOM.libraryResults.querySelectorAll('h3')).map(h => h.textContent.trim()));
+
+                books.forEach(book => {
+                    if (existingTitles.has(book.title.trim())) return;
+                    existingTitles.add(book.title.trim());
+                    
+                    const card = document.createElement('div');
+                    card.className = 'book-card';
+                    
+                    const readLink = book.link || '#';
+                    const readButtonText = book.source.includes('Local') ? 'Download/Read' : 'Read/Preview';
+
+                    card.innerHTML = `
+                        <img src="${book.cover}" alt="Cover of ${book.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/100x150?text=No+Cover';" />
+                        <div class="book-details">
+                            <h3>${book.title}</h3>
+                            <p><strong>Author:</strong> ${book.author}</p>
+                            <p><strong>Year:</strong> ${book.year} | <strong>Source:</strong> ${book.source}</p>
+                            <a href="${readLink}" target="_blank" rel="noopener noreferrer" class="nav-btn-primary mt-3" style="align-self: flex-start;">${readButtonText}</a>
+                        </div>
+                    `;
+                    DOM.libraryResults.appendChild(card);
+                });
+            }
+            
+            function addLocalEbook(event) {
+                event.preventDefault();
+                const user = getStorageItem(STORAGE_KEY_LOGGED_IN_USER, null);
+                if (!user || (!user.isAdmin && user.role !== 'Teacher')) {
+                    alert('Permission denied. Only Admins/Teachers can add books.');
+                    return;
+                }
+
+                const title = document.getElementById('local-title').value;
+                const author = document.getElementById('local-author').value;
+                const pdf = document.getElementById('local-pdf').value;
+
+                const newBook = {
+                    id: generateUUID(),
+                    source: 'Local (Admin Added)',
+                    title: title,
+                    author: author,
+                    year: new Date().getFullYear().toString(),
+                    link: pdf,
+                    cover: 'https://via.placeholder.com/100x150?text=Local'
+                };
+
+                const books = getStorageItem(STORAGE_KEY_LOCAL_BOOKS);
+                books.unshift(newBook); // Add to the start for easy visibility
+                setStorageItem(STORAGE_KEY_LOCAL_BOOKS, books);
+
+                DOM.addEbookForm.reset();
+                alert('Book added successfully!');
+                
+                // Re-render only local books if no query is active
+                if (!currentQuery) {
+                     renderBookResults(books, true); 
+                }
+            }
+
+            // --- EXAMS & PAYMENT FUNCTIONS ---
+
+            function createExam(event) {
+                event.preventDefault();
+                const user = getStorageItem(STORAGE_KEY_LOGGED_IN_USER, null);
+                if (!user || (!user.isAdmin && user.role !== 'Teacher')) {
+                    alert('Permission denied. Only Admins/Teachers can create exams.');
+                    return;
+                }
+
+                const title = document.getElementById('exam-title').value;
+                const subject = document.getElementById('exam-subject').value;
+                const pdf = document.getElementById('exam-pdf').value;
+                const price = parseFloat(document.getElementById('exam-price').value) || 0;
+
+                const newExam = {
+                    id: generateUUID(),
+                    title: title,
+                    subject: subject,
+                    link: pdf,
+                    price: price,
+                    creator: user.name,
+                    creatorRole: user.role
+                };
+
+                const exams = getStorageItem(STORAGE_KEY_EXAMS);
+                exams.push(newExam);
+                setStorageItem(STORAGE_KEY_EXAMS, exams);
+
+                DOM.createExamForm.reset();
+                alert('Exam created successfully and saved locally!');
+                renderExams();
+            }
+
+            function renderExams() {
+                const exams = getStorageItem(STORAGE_KEY_EXAMS);
+                const purchases = getStorageItem(STORAGE_KEY_PURCHASES);
+                const user = getStorageItem(STORAGE_KEY_LOGGED_IN_USER, {});
+                const listEl = document.getElementById('exams-list');
+                listEl.innerHTML = '';
+                
+                if (exams.length === 0) {
+                    listEl.innerHTML = '<li>No exams available yet.</li>';
+                    return;
+                }
+
+                exams.forEach(exam => {
+                    const isPaid = exam.price > 0;
+                    const isPurchased = isPaid && purchases.some(p => p.examId === exam.id && p.userId === user.id);
+                    
+                    const item = document.createElement('li');
+                    item.className = 'exam-item' + (isPaid ? ' exam-item-paid' : '');
+                    
+                    let actionButton;
+
+                    if (isPaid && !isPurchased) {
+                        actionButton = `<button class="nav-btn-danger" data-exam-id="${exam.id}" data-title="${exam.title}" data-price="${exam.price}">Buy Now (Ksh ${exam.price})</button>`;
+                    } else {
+                        const btnClass = isPurchased ? 'nav-btn-success' : 'nav-btn-primary';
+                        actionButton = `<a href="${exam.link}" target="_blank" rel="noopener noreferrer" class="${btnClass}">Download / Read</a>`;
+                    }
+
+                    item.innerHTML = `
+                        <span>${exam.title} (${exam.subject}) <small>— ${exam.creator}</small></span>
+                        ${actionButton}
+                    `;
+                    listEl.appendChild(item);
+                });
+                
+                // Add event listeners to newly created "Buy Now" buttons
+                document.querySelectorAll('.nav-btn-danger').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const { examId, title, price } = e.target.dataset;
+                        promptPayment(examId, title, parseFloat(price));
+                    });
+                });
+            }
+            
+            function promptPayment(examId, title, price) {
+                if (!getStorageItem(STORAGE_KEY_LOGGED_IN_USER, null)) {
+                    alert('Please sign in to purchase the exam.');
+                    return;
+                }
+                currentExamIdForPayment = examId;
+                document.getElementById('payment-title').textContent = `Purchase: ${title}`;
+                document.getElementById('payment-price').textContent = `Ksh ${price}`;
+                openModal('paymentModal');
+            }
+
+            function simulatePaymentVerification(event) {
+                event.preventDefault();
+                const transactionCode = document.getElementById('transaction-code').value.trim();
+                const user = getStorageItem(STORAGE_KEY_LOGGED_IN_USER, null);
+
+                if (!user || !transactionCode) {
+                    alert('Missing user or transaction code.');
+                    return;
+                }
+                
+                if (transactionCode.length < 5) {
+                    alert('Simulated Verification Failed: Invalid transaction code format.');
+                    return;
+                }
+
+                const purchases = getStorageItem(STORAGE_KEY_PURCHASES);
+                purchases.push({
+                    examId: currentExamIdForPayment,
+                    userId: user.id,
+                    transaction: transactionCode,
+                    date: new Date().toISOString()
+                });
+                setStorageItem(STORAGE_KEY_PURCHASES, purchases);
+
+                alert('Simulated Purchase Complete! You now have access to the exam.');
+                closeModal('paymentModal');
+                DOM.paymentForm.reset();
+                renderExams();
+            }
+
+            // --- EVENT BINDING ---
+            function bindEvents() {
+                // Navigation Links
+                document.querySelectorAll('.nav-link-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => showSection(e.target.dataset.section));
+                });
+                
+                // Modals
+                document.querySelectorAll('.modal-open-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => openModal(e.target.dataset.modal));
+                });
+                document.querySelectorAll('.modal-close-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal').id));
+                });
+                // Close modal when clicking outside
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) closeModal(modal.id);
+                    });
+                });
+
+                // Forms Submission
+                DOM.signInForm.addEventListener('submit', signIn);
+                DOM.signUpForm.addEventListener('submit', signUp);
+                DOM.signOutBtn.addEventListener('click', signOut);
+                DOM.addEbookForm.addEventListener('submit', addLocalEbook);
+                DOM.createExamForm.addEventListener('submit', createExam);
+                DOM.paymentForm.addEventListener('submit', simulatePaymentVerification);
+
+                // Admin/Teacher Toggle Buttons
+                document.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => toggleVisibility(e.target.dataset.target));
+                });
+
+                // Library Search
+                document.getElementById('execute-search-btn').addEventListener('click', startNewBookSearch);
+                DOM.bookSearchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') startNewBookSearch();
+                });
+                DOM.loadMoreBtn.addEventListener('click', loadMoreBooks);
+            }
+
+
+            // --- INITIALIZATION ---
+
+            function init() {
+                // Initialize default demo user if needed
+                let users = getStorageItem(STORAGE_KEY_USERS);
+                if (users.length === 0) {
+                    users = [{
+                        id: 'demo-user-123',
+                        name: 'Demo Student',
+                        email: 'student@agida.com',
+                        // NOTE: Base64 stub
+                        passwordEncodedStub: btoa('password123'), 
+                        role: 'Student',
+                        level: 'Form 4',
+                        isAdmin: false
+                    }];
+                    setStorageItem(STORAGE_KEY_USERS, users);
+                }
+                
+                // Ensure all storage keys are initialized
+                getStorageItem(STORAGE_KEY_LOCAL_BOOKS);
+                getStorageItem(STORAGE_KEY_EXAMS);
+                getStorageItem(STORAGE_KEY_PURCHASES);
+                
+                bindEvents();
+                showSection('home');
+                updateUI(); 
+                startNewBookSearch(); // Initial load to show local books
+                
+                // Play sound (may be blocked by browser)
+                const sound = document.getElementById('app-sound');
+                if (sound) {
+                    sound.volume = 0.5;
+                    sound.play().catch(() => console.log("Audio play blocked."));
+                }
+            }
+
+            // Run initialization when the document is fully loaded
+            document.addEventListener('DOMContentLoaded', init);
+        })(); // End IIFE
+    </script>
+</body>
+</html>

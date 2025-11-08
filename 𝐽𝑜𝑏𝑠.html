@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>🌐 Global Jobs Finder Ultimate</title>
+<style>
+:root {
+  --bg: #0f1724; --text: #e6eef6; --card: #0b1220; --muted: #9aa4b2;
+  --accent: #2dd4bf; --border: rgba(255,255,255,0.06); --surface: rgba(255,255,255,0.02);
+  transition: all 0.3s ease;
+}
+body.light {
+  --bg: #f8fafc; --text: #1e293b; --card: #fff; --muted: #64748b;
+  --accent: #14b8a6; --border: rgba(0,0,0,0.08); --surface: rgba(0,0,0,0.02);
+}
+body {
+  margin:0;font-family:"Inter",system-ui,sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;padding:24px;
+  transition:background .3s,color .3s;
+}
+.container{max-width:1100px;margin:auto;width:100%;}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;}
+header h1{margin:0;font-size:22px;}
+header p{margin:0;color:var(--muted);font-size:14px;}
+.toggle-theme{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:8px 12px;cursor:pointer;}
+.card{background:var(--card);border-radius:10px;padding:16px;border:1px solid var(--border);
+  box-shadow:0 6px 16px rgba(0,0,0,0.2);}
+.search-row{display:flex;flex-wrap:wrap;gap:10px;}
+input,select{padding:10px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);flex:1;font-size:14px;}
+button{background:linear-gradient(90deg,var(--accent),#34d399);color:#012;font-weight:600;
+  border:none;border-radius:8px;padding:10px 14px;cursor:pointer;}
+.results{margin-top:16px;display:grid;gap:12px;}
+.job{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.job h3{margin:0;font-size:16px;}
+.job p{margin:6px 0 0;color:var(--muted);font-size:14px;}
+.link-btn{border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--accent);
+  font-weight:600;cursor:pointer;padding:8px 12px;margin-top:6px;}
+.footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;padding:16px;}
+.categories{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;}
+.cat-btn{padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;
+  color:var(--accent);cursor:pointer;font-size:13px;}
+.cat-btn.active{background:var(--accent);color:#012;}
+.loading{color:var(--muted);text-align:center;margin-top:10px;}
+@media(max-width:700px){.search-row{flex-direction:column;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>🌍 𝐆𝐥𝐨𝐛𝐚𝐥 𝐉𝐨𝐛𝐬 𝐅𝐢𝐧𝐝𝐞𝐫 𝐔𝐥𝐭𝐢𝐦𝐚𝐭𝐞💰💸</h1>
+      <p>Real-time worldwide job search — Remote & in-person jobs — 𝑆𝑐𝑟𝑜𝑙𝑙 𝐷𝑜𝑤𝑛 𝑖𝑛𝑓𝑖𝑛𝑖𝑡𝑒𝑙𝑦 𝑡𝑜 𝑓𝑖𝑛𝑑 𝑦𝑜𝑢𝑟 𝑅𝑒𝑎𝑙𝑙 𝐽𝑜𝑏🥳💰.</p>
+    </div>
+    <button id="themeToggle" class="toggle-theme">🌙 Dark Mode</button>
+  </header>
+
+  <section class="card" style="margin-top:16px">
+    <div class="search-row">
+      <input id="keyword" type="text" placeholder="Search jobs live (e.g. Data Scientist)">
+      <input id="location" type="text" placeholder="Location (optional)">
+      <select id="jobType">
+        <option value="any">Any Type</option>
+        <option value="remote">Remote</option>
+        <option value="in-person">In-Person</option>
+        <option value="hybrid">Hybrid</option>
+      </select>
+    </div>
+
+    <div class="categories" id="categories">
+      <button class="cat-btn active" data-cat="">All</button>
+      <button class="cat-btn" data-cat="software">Software</button>
+      <button class="cat-btn" data-cat="design">Design</button>
+      <button class="cat-btn" data-cat="marketing">Marketing</button>
+      <button class="cat-btn" data-cat="data">Data</button>
+      <button class="cat-btn" data-cat="finance">Finance</button>
+      <button class="cat-btn" data-cat="education">Education</button>
+      <button class="cat-btn" data-cat="health">Healthcare</button>
+      <button class="cat-btn" data-cat="engineering">Engineering</button>
+    </div>
+
+    <div class="results" id="results">
+      <p style="color:var(--muted)">Start typing to search jobs...</p>
+    </div>
+    <p id="loading" class="loading"></p>
+  </section>
+
+  <footer class="footer">𝐊𝐚𝐧𝐠𝐨𝐠𝐨 𝐊. 𝐌𝐚𝐫𝐭𝐢𝐧 || ©2025 . 𝐀𝐥𝐥 𝐑𝐢𝐠𝐡𝐭𝐬 𝐑𝐞𝐬𝐞𝐫𝐯𝐞𝐝<br>
+  Built with ❤️ — 𝐆𝐥𝐨𝐛𝐚𝐥 𝐉𝐨𝐛𝐬 𝐅𝐢𝐧𝐝𝐞𝐫 𝐔𝐥𝐭𝐢𝐦𝐚𝐭𝐞 © 2025
+  </footer>
+</div>
+
+<script>
+const resultsEl = document.getElementById("results");
+const loadingEl = document.getElementById("loading");
+const keywordEl = document.getElementById("keyword");
+const locationEl = document.getElementById("location");
+const jobTypeEl = document.getElementById("jobType");
+const catBtns = document.querySelectorAll(".cat-btn");
+
+let currentCategory = "";
+let searchTimeout;
+let page = 0;
+let jobs = [];
+let isFetching = false;
+let lastKeyword = "";
+
+catBtns.forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    catBtns.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentCategory = btn.dataset.cat;
+    resetAndSearch();
+  });
+});
+
+keywordEl.addEventListener("input",()=>{
+  clearTimeout(searchTimeout);
+  searchTimeout=setTimeout(resetAndSearch,600);
+});
+locationEl.addEventListener("input",()=>{
+  clearTimeout(searchTimeout);
+  searchTimeout=setTimeout(resetAndSearch,600);
+});
+jobTypeEl.addEventListener("change",resetAndSearch);
+
+async function fetchJobs(keyword,location,type,pageNum){
+  let allJobs = [];
+  try{
+    if(type!=="in-person"){
+      const resp = await fetch(`https://remotive.com/api/remote-jobs?search=${encodeURIComponent(keyword)}&limit=50`);
+      const data = await resp.json();
+      if(data.jobs) allJobs = data.jobs.slice(pageNum*25,(pageNum+1)*25);
+    }
+  }catch{}
+  if(type==="any"||type==="in-person"||type==="hybrid"){
+    const q = encodeURIComponent(keyword+" "+location);
+    allJobs.push(
+      {title:`Search ${keyword} on Google Jobs`, company_name:"Google", url:`https://www.google.com/search?q=${q}+jobs`},
+      {title:`${keyword} openings on LinkedIn`, company_name:"LinkedIn", url:`https://www.linkedin.com/jobs/search?keywords=${q}`},
+      {title:`${keyword} roles on Indeed`, company_name:"Indeed", url:`https://www.indeed.com/jobs?q=${q}`},
+      {title:`${keyword} positions on Glassdoor`, company_name:"Glassdoor", url:`https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${q}`}
+    );
+  }
+  return allJobs;
+}
+
+async function performSearch(){
+  if(isFetching) return;
+  isFetching = true;
+  loadingEl.textContent = "Fetching jobs...";
+  const keyword = keywordEl.value.trim() || currentCategory || "developer";
+  const location = locationEl.value.trim();
+  const type = jobTypeEl.value;
+  if(page===0) resultsEl.innerHTML="";
+  const newJobs = await fetchJobs(keyword,location,type,page);
+  jobs = jobs.concat(newJobs);
+  renderJobs(newJobs);
+  loadingEl.textContent = "";
+  isFetching = false;
+}
+
+function renderJobs(list){
+  if(list.length===0 && page===0){
+    resultsEl.innerHTML = "<p>No jobs found.</p>";
+    return;
+  }
+  list.forEach(job=>{
+    const el=document.createElement("div");
+    el.className="job";
+    el.innerHTML=`<h3>${job.title}</h3><p>${job.company_name||"Company"}</p>
+      <button class="link-btn" onclick="window.open('${job.url}','_blank')">View Job</button>`;
+    resultsEl.appendChild(el);
+  });
+}
+
+function resetAndSearch(){
+  page=0;jobs=[];resultsEl.innerHTML="";performSearch();
+}
+
+window.addEventListener("scroll",()=>{
+  if((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200){
+    if(!isFetching){page++;performSearch();}
+  }
+});
+
+// Theme toggle
+const themeToggle=document.getElementById("themeToggle");
+const savedTheme=localStorage.getItem("theme");
+if(savedTheme==="light"){document.body.classList.add("light");themeToggle.textContent="🌙 Dark Mode";}
+else{themeToggle.textContent="☀️ Light Mode";}
+themeToggle.addEventListener("click",()=>{
+  document.body.classList.toggle("light");
+  const isLight=document.body.classList.contains("light");
+  themeToggle.textContent=isLight?"🌙 Dark Mode":"☀️ Light Mode";
+  localStorage.setItem("theme",isLight?"light":"dark");
+});
+</script>
+</body>
+</html>

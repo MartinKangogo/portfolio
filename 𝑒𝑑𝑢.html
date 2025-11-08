@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced University Research Tool 🔎</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styling */
+        #results {
+            max-height: 550px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #1f2937;
+        }
+        #results::-webkit-scrollbar {
+            width: 8px;
+        }
+        #results::-webkit-scrollbar-thumb {
+            background-color: #3b82f6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+
+    <div class="max-w-5xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-green-400 mb-2">Global University Research Tool</h1>
+            <p class="text-gray-400">Search by country or specific name to find institution details and attempt access to common deep links.</p>
+        </header>
+
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="countryInput" class="block text-sm font-medium mb-2 text-gray-300">Search by Country (e.g., India)</label>
+                    <input 
+                        type="text" 
+                        id="countryInput" 
+                        placeholder="Enter Country Name"
+                        class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                    >
+                </div>
+                <div>
+                    <label for="nameInput" class="block text-sm font-medium mb-2 text-gray-300">Search by University Name (Optional)</label>
+                    <input 
+                        type="text" 
+                        id="nameInput" 
+                        placeholder="Enter University Name (e.g., Harvard)"
+                        class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                    >
+                </div>
+            </div>
+            
+            <button 
+                id="searchButton" 
+                class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-150 shadow-lg"
+            >
+                Start Search 🚀
+            </button>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-semibold mb-4 text-green-400" id="resultsTitle">Search Results</h2>
+            
+            <p id="message" class="text-center text-gray-400 py-4">Enter your criteria above and click 'Start Search'.</p>
+
+            <div id="results" class="space-y-6">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const countryInput = document.getElementById('countryInput');
+        const nameInput = document.getElementById('nameInput');
+        const searchButton = document.getElementById('searchButton');
+        const resultsContainer = document.getElementById('results');
+        const messageDisplay = document.getElementById('message');
+        const resultsTitle = document.getElementById('resultsTitle');
+
+        // Common URL paths used by universities for deep links
+        const deepLinkPaths = {
+            'Portal': ['/portal', '/student-login', '/login', '/myportal'],
+            'Library': ['/library', '/libraries', '/lib'],
+            'Admissions': ['/admissions', '/admission', '/apply'],
+            'Faculties': ['/faculties', '/departments', '/academics'],
+            'LMS/Blackboard': ['/lms', '/moodle', '/blackboard', '/canvas'],
+            'Course Catalog': ['/courses', '/programs', '/academics/catalog']
+        };
+
+        // Helper function to safely extract the base URL (domain)
+        function getBaseUrl(url) {
+            try {
+                // Prepend protocol if missing for proper URL object parsing
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'http://' + url;
+                }
+                const parsedUrl = new URL(url);
+                return parsedUrl.protocol + '//' + parsedUrl.host;
+            } catch (e) {
+                return url; // Return original if parsing fails
+            }
+        }
+
+        // Helper function to create an HTML link button
+        function createLinkButton(text, url) {
+            return `
+                <a href="${url}" target="_blank" 
+                   class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-blue-600 hover:bg-blue-700 transition duration-150 text-white"
+                   title="Clicking this link will attempt to open the page without logging in.">
+                    ${text} &rarr;
+                </a>
+            `;
+        }
+
+        // Main search function
+        async function searchUniversities() {
+            const country = countryInput.value.trim();
+            const name = nameInput.value.trim();
+            resultsContainer.innerHTML = '';
+            resultsTitle.textContent = 'Search Results';
+
+            if (!country && !name) {
+                messageDisplay.textContent = "Please enter at least a Country or University Name to search.";
+                messageDisplay.classList.remove('hidden');
+                return;
+            }
+
+            messageDisplay.textContent = "Searching the global directory...";
+            messageDisplay.classList.remove('hidden');
+            searchButton.disabled = true;
+            searchButton.textContent = 'Searching...';
+
+            // Construct API URL
+            // API: http://universities.hipolabs.com/search
+            let API_URL = `http://universities.hipolabs.com/search?`;
+
+            if (country) {
+                API_URL += `country=${encodeURIComponent(country)}`;
+            }
+            if (name) {
+                API_URL += `${country ? '&' : ''}name=${encodeURIComponent(name)}`;
+            }
+
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                let data = await response.json();
+
+                // If only a country was searched, filter by name if one was partially provided
+                if (country && name && data.length > 0) {
+                    const searchLower = name.toLowerCase();
+                    data = data.filter(uni => uni.name.toLowerCase().includes(searchLower));
+                }
+
+                messageDisplay.classList.add('hidden');
+                resultsTitle.textContent = `Found ${data.length} Institutions`;
+
+                if (data.length === 0) {
+                    messageDisplay.textContent = `No institutions found matching your criteria. Try widening your search.`;
+                    messageDisplay.classList.remove('hidden');
+                    return;
+                }
+
+                // Render the results
+                data.forEach(uni => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-700 p-5 rounded-lg shadow-xl border-l-4 border-green-500';
+
+                    // Use the domain as the base URL
+                    const domain = uni.domains && uni.domains.length > 0 ? uni.domains[0] : null;
+                    const webPage = uni.web_pages && uni.web_pages.length > 0 ? uni.web_pages[0] : null;
+                    const baseUrl = domain ? getBaseUrl(domain) : (webPage ? getBaseUrl(webPage) : null);
+                    
+                    let quickLinksHtml = '';
+
+                    if (baseUrl) {
+                        // Generate Quick Links based on the base URL
+                        quickLinksHtml = Object.entries(deepLinkPaths).map(([key, paths]) => {
+                            // Use the most likely path for the link
+                            const link = baseUrl.replace(/\/$/, '') + paths[0]; 
+                            return createLinkButton(key, link);
+                        }).join('\n');
+                    } else {
+                        quickLinksHtml = `<span class="text-gray-500">No verifiable primary domain to generate quick links.</span>`;
+                    }
+
+                    const primaryLink = webPage || (baseUrl ? baseUrl.replace(/\/$/, '') : '#');
+
+                    card.innerHTML = `
+                        <h3 class="text-2xl font-bold text-green-300">${uni.name}</h3>
+                        <p class="text-sm text-gray-400 mt-1">Country: ${uni.country} (${uni.alpha_two_code})</p>
+                        <p class="text-sm text-gray-400">State/Province: ${uni['state-province'] || 'N/A'}</p>
+                        <p class="text-sm text-gray-300 mt-2">
+                            Website: 
+                            <a href="${primaryLink}" target="_blank" class="font-mono text-blue-400 hover:text-blue-300 underline">${primaryLink !== '#' ? primaryLink : 'N/A'}</a>
+                        </p>
+                        
+                        <div class="mt-4 pt-3 border-t border-gray-600">
+                            <h4 class="text-lg font-semibold mb-2 text-white">Quick Links (Attempt Access)</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${quickLinksHtml}
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Note: These links are automatically 𝐋𝐨𝐚𝐝𝐞𝐝 based on common paths. Access depends on the university's public setup (no login provided).</p>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                messageDisplay.textContent = `An error occurred while fetching data. Check your country/name spelling.`;
+                messageDisplay.classList.remove('hidden');
+            } finally {
+                searchButton.disabled = false;
+                searchButton.textContent = 'Start Search 🚀';
+            }
+        }
+
+        // Event Listeners
+        searchButton.addEventListener('click', searchUniversities);
+
+        // Allow searching with the Enter key in either field
+        countryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchUniversities();
+            }
+        });
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchUniversities();
+            }
+        });
+
+    </script>
+</body>
+</html>

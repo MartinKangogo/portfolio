@@ -1,0 +1,1517 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AGIDA DIGITAL LIBRARY</title>
+    <meta name="description" content="AGIDA DIGITAL LIBRARY - International digital library. Read public-domain books, borrow, and purchase premium ebooks." />
+    <meta name="keywords" content="AGIDA Digital Library,ebooks,read online,mpesa,paypal,project gutenberg,open library" />
+    <meta name="author" content="AGIDA DIGITAL LIBRARY" />
+    <link rel="icon" href="./logos/logo.jpg" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- intl-tel-input (country code dropdown) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+    <style>
+         :root {
+            --accent: #2b8cff;
+            --accent-2: #8c2bff;
+            --bg: #f4f6fb;
+            /* keep as requested */
+            --card: #fff;
+            --muted: #6b7280;
+            --footer: #05233b;
+        }
+        
+        * {
+            box-sizing: border-box
+        }
+        
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;
+            color: #111;
+            background: var(--bg)
+        }
+        /* Background logo centered and fixed */
+        
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: url('./logos/BGLC.jpg') no-repeat center center;
+            background-size: contain;
+            opacity: .08;
+            pointer-events: none;
+        }
+        
+        header {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            padding: 18px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #fff
+        }
+        
+        header img.site-logo {
+            width: 100px;
+            height: auto;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 6px
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: 1px
+        }
+        
+        nav {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.55)
+        }
+        
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all .18s
+        }
+        
+        nav a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2)
+        }
+        
+        nav a.active {
+            box-shadow: 0 10px 30px rgba(43, 140, 255, 0.18)
+        }
+        
+        main {
+            max-width: 1100px;
+            margin: 18px auto;
+            padding: 12px
+        }
+        
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 18px
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06)
+        }
+        
+        .full-width {
+            grid-column: 1/-1
+        }
+        
+        .search-row {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e6e9ef
+        }
+        
+        button {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 0;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer
+        }
+        
+        button.ghost {
+            background: transparent;
+            border: 1px solid #e6e9ef;
+            color: #111
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 12px
+        }
+        
+        .book-card {
+            background: linear-gradient(180deg, #fff, #fbfdff);
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #eef2ff
+        }
+        
+        .book-cover {
+            width: 120px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #f3f4f6
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--accent);
+            font-weight: 700
+        }
+        
+        .premium {
+            border: 2px solid gold
+        }
+        /* Contact buttons */
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px
+        }
+        
+        .contact-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 800
+        }
+        
+        .contact-whatsapp {
+            background: #25d366
+        }
+        
+        .contact-call {
+            background: #0b3f64
+        }
+        
+        .contact-sms {
+            background: #ff8c42
+        }
+        
+        .contact-email {
+            background: #d34836
+        }
+        
+        .contact-fb {
+            background: #1877f2
+        }
+        
+        .contact-google {
+            background: #202124
+        }
+        /* Reader modal */
+        
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999
+        }
+        
+        .modal .panel {
+            width: 95%;
+            max-width: 960px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 12px 40px rgba(2, 6, 23, 0.4)
+        }
+        
+        .reader {
+            height: 60vh;
+            overflow: auto;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fafafa;
+            border: 1px solid #eee
+        }
+        /* Payment modal small */
+        
+        .pay-methods {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px
+        }
+        
+        .pay-btn {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 700
+        }
+        
+        .pay-mpesa {
+            background: #2fa84f;
+            color: #fff
+        }
+        
+        .pay-paypal {
+            background: #003087;
+            color: #fff
+        }
+        
+        .pay-stripe {
+            background: #5469d4;
+            color: #fff
+        }
+        
+        .pay-card {
+            background: #111;
+            color: #fff
+        }
+        /* responsive */
+        
+        @media(max-width:980px) {
+            .layout {
+                grid-template-columns: 1fr
+            }
+            nav {
+                padding: 8px
+            }
+            header img.site-logo {
+                width: 64px
+            }
+        }
+        
+        footer {
+            background: var(--footer);
+            color: #fff;
+            padding: 18px;
+            margin-top: 18px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px
+        }
+        
+        .sponsors {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px
+        }
+        
+        .sponsor1 {
+            background: #fce34b;
+            color: #111;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-weight: 900
+        }
+        
+        .sponsor2 {
+            background: #ffb6c1;
+            color: #7b1f3a;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-weight: 700
+        }
+        
+        small.muted {
+            color: var(--muted)
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="./logos/logo.jpg" class="site-logo" alt="AGIDA DIGITAL LIBRARY logo" />
+        <h1>AGIDA DIGITAL LIBRARY</h1>
+        <small style="opacity:.95">Access • Borrow • Learn</small>
+        <nav id="mainNav" style="width:100%;margin-top:10px">
+            <a href="#home" data-route="home" class="nav-link" onclick="navigate('home')">HOME</a>
+            <a href="#books" data-route="books" class="nav-link" onclick="navigate('books')">BOOKS</a>
+            <a href="#my-library" data-route="my-library" class="nav-link" onclick="navigate('my-library')">MY LIBRARY</a>
+            <a href="#borrowed" data-route="borrowed" class="nav-link" onclick="navigate('borrowed')">BORROWED</a>
+            <a href="#contact" data-route="contact" class="nav-link" onclick="navigate('contact')">CONTACT ADMIN</a>
+            <a href="#login" data-route="login" class="nav-link" id="navLogin" onclick="navigate('login')">LOGIN</a>
+            <a href="#signup" data-route="signup" class="nav-link" onclick="navigate('signup')">SIGN UP</a>
+            <a href="#admin" data-route="admin" class="nav-link" id="navAdmin" style="display:none" onclick="navigate('admin')">ADMIN</a>
+            <a href="#" id="navLogout" class="nav-link" style="display:none" onclick="logout()">LOGOUT</a>
+        </nav>
+    </header>
+
+    <main class="main" role="main">
+        <div class="layout" style="max-width:1100px;margin:18px auto;padding:0 12px">
+            <!-- Main column -->
+            <section id="pageContent" class="card full-width">
+                <!-- Home -->
+                <div id="homePage" class="page" style="display:block">
+                    <h2>WELCOME TO AGIDA DIGITAL LIBRARY</h2>
+                    <p class="muted">Find public-domain books, read online, borrow, or buy premium titles. Sign up to save reading progress and access features.</p>
+
+                    <div class="card" style="margin-top:12px">
+                        <h3>Search books</h3>
+                        <div class="search-row" style="margin-top:8px">
+                            <input id="searchInput" type="text" placeholder="Search by title or author..." />
+                            <select id="categoryFilter" style="width:200px">
+                <option value="">All categories</option>
+              </select>
+                            <button id="searchBtn">Search</button>
+                        </div>
+                        <small class="muted">Tip: try "Pride", "Alice", "Programming"</small>
+                    </div>
+                </div>
+
+                <!-- Books -->
+                <div id="booksPage" class="page" style="display:none;margin-top:12px">
+                    <h2>BOOKS</h2>
+                    <div id="bookList" class="books-grid" style="margin-top:12px"></div>
+                </div>
+
+                <!-- Borrowed -->
+                <div id="borrowedPage" class="page" style="display:none;margin-top:12px">
+                    <h2>BORROWED BOOKS</h2>
+                    <div id="borrowList" class="books-grid" style="margin-top:12px"></div>
+                </div>
+
+                <!-- My Library -->
+                <div id="myLibraryPage" class="page" style="display:none;margin-top:12px">
+                    <h2>MY LIBRARY</h2>
+                    <div id="myLibraryList" class="books-grid" style="margin-top:12px"></div>
+                </div>
+
+                <!-- Contact -->
+                <div id="contactPage" class="page" style="display:none;margin-top:12px">
+                    <h2>CONTACT ADMIN</h2>
+                    <p class="muted">Click a button — it will redirect to the corresponding app or page.</p>
+                    <div class="card" style="margin-top:12px">
+                        <div class="contact-grid">
+                            <a class="contact-btn contact-whatsapp" href="https://wa.me/254726570029" target="_blank" title="WhatsApp Admin 1"><i class="fab fa-whatsapp fa-2x"></i></a>
+                            <a class="contact-btn contact-whatsapp" href="https://wa.me/254797596360" target="_blank" title="WhatsApp Admin 2"><i class="fab fa-whatsapp fa-2x"></i></a>
+                            <a class="contact-btn contact-call" href="tel:+254726570029" title="Call Admin 1"><i class="fas fa-phone fa-2x"></i></a>
+                            <a class="contact-btn contact-call" href="tel:+254797596360" title="Call Admin 2"><i class="fas fa-phone fa-2x"></i></a>
+                            <a class="contact-btn contact-sms" href="sms:+254726570029" title="SMS Admin 1"><i class="fas fa-comment-sms fa-2x"></i></a>
+                            <a class="contact-btn contact-sms" href="sms:+254797596360" title="SMS Admin 2"><i class="fas fa-comment-sms fa-2x"></i></a>
+                            <a class="contact-btn contact-email" href="mailto:kangogomartin023@gmail.com" title="Email Admin 1"><i class="fas fa-envelope fa-2x"></i></a>
+                            <a class="contact-btn contact-email" href="mailto:keterdaisy@gmail.com" title="Email Admin 2"><i class="fas fa-envelope fa-2x"></i></a>
+                            <a class="contact-btn contact-fb" href="https://www.facebook.com" target="_blank" title="Facebook"><i class="fab fa-facebook-f fa-2x"></i></a>
+                            <a class="contact-btn contact-google" href="https://mail.google.com" target="_blank" title="Google Mail"><i class="fab fa-google fa-2x"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login -->
+                <div id="loginPage" class="page" style="display:none;margin-top:12px">
+                    <h2>LOGIN</h2>
+                    <div style="max-width:520px;margin:0 auto">
+                        <div class="card">
+                            <input id="loginEmail" type="text" placeholder="Email or username" />
+                            <select id="loginRole">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="parent">Parent</option>
+                <option value="admin">Admin</option>
+              </select>
+                            <input id="loginPassword" type="password" placeholder="Password" />
+                            <div style="display:flex;gap:8px">
+                                <button id="loginBtn">Login</button>
+                                <button class="ghost" id="toRegister">Create account</button>
+                            </div>
+                            <p id="loginNotice" class="muted"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signup -->
+                <div id="signupPage" class="page" style="display:none;margin-top:12px">
+                    <h2>SIGN UP</h2>
+                    <div style="max-width:720px;margin:0 auto">
+                        <form id="signupForm" class="card">
+                            <input id="regFullname" type="text" placeholder="Full name" required />
+                            <input id="regEmail" type="email" placeholder="Email" required />
+                            <div style="display:flex;gap:8px">
+                                <select id="regRole" required>
+                  <option value="">-- Select role --</option>
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                  <option value="parent">Parent</option>
+                  <option value="admin">Admin</option>
+                </select>
+                                <input id="regPassword" type="password" placeholder="Password" required />
+                            </div>
+
+                            <!-- intl-tel-input placeholder -->
+                            <div id="phoneWrap" style="display:none;margin-top:8px">
+                                <label>Phone (required for Admin, Teacher, Parent, and Tertiary students 18+)</label>
+                                <input id="regPhone" type="tel" placeholder="+254 7..." />
+                            </div>
+
+                            <!-- Student extras -->
+                            <div id="studentExtras" style="display:none;margin-top:8px">
+                                <label>Level of study</label>
+                                <select id="studentLevel">
+                  <option value="">-- choose level --</option>
+                  <option value="ECD">ECD</option>
+                  <option value="Primary">Primary</option>
+                  <option value="JSS">JSS</option>
+                  <option value="High School">High School</option>
+                  <option value="Polytechnic">Polytechnic</option>
+                  <option value="College">College</option>
+                  <option value="University">University</option>
+                </select>
+                                <div id="ageCheckWrap" style="display:none;margin-top:8px">
+                                    <label><input type="checkbox" id="studentOver18" /> I confirm I am 18+ years old</label>
+                                </div>
+                            </div>
+
+                            <!-- Teacher extras -->
+                            <div id="teacherExtras" style="display:none;margin-top:8px">
+                                <input id="teacherSubjects" type="text" placeholder="Subjects taught (comma separated)" />
+                                <input id="teacherSchool" type="text" placeholder="School name" />
+                            </div>
+
+                            <!-- Parent extras -->
+                            <div id="parentExtras" style="display:none;margin-top:8px">
+                                <label>Registering for</label>
+                                <select id="parentFor">
+                  <option value="self">Myself</option>
+                  <option value="child">My child</option>
+                </select>
+                                <div id="childInfo" style="display:none;margin-top:8px">
+                                    <input id="childName" placeholder="Child full name" />
+                                    <select id="childLevel">
+                    <option>ECD</option><option>Primary</option><option>JSS</option><option>High School</option><option>Polytechnic</option><option>College</option><option>University</option>
+                  </select>
+                                </div>
+                            </div>
+
+                            <!-- Admin secret (demo) -->
+                            <div id="adminSecretWrap" style="display:none;margin-top:8px">
+                                <input id="adminSecret" placeholder="Admin secret code (demo only)" />
+                                <small class="muted">Demo only: enter secret to create admin. Production: provision admins server-side.</small>
+                            </div>
+
+                            <div style="margin-top:12px;display:flex;gap:8px">
+                                <button type="submit">Create account</button>
+                                <button type="button" id="cancelSignup" class="ghost">Cancel</button>
+                            </div>
+                            <p id="signupNotice" class="muted"></p>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Admin panel -->
+                <div id="adminPage" class="page" style="display:none;margin-top:12px">
+                    <h2>ADMIN PANEL</h2>
+                    <p class="muted">Add books (manual or upload file). In production, use server storage.</p>
+
+                    <div class="card" style="margin-bottom:12px">
+                        <h4>Add book manually</h4>
+                        <input id="adminBookTitle" placeholder="Title" />
+                        <input id="adminBookAuthor" placeholder="Author" />
+                        <input id="adminBookCategory" placeholder="Category" />
+                        <input id="adminBookImage" placeholder="Image URL (optional)" />
+                        <label><input type="checkbox" id="adminBookPremium" /> Mark as premium</label>
+                        <div id="adminBookPriceWrap" style="display:none;margin-top:8px">
+                            <input id="adminBookPrice" type="number" placeholder="Price (KES)" />
+                        </div>
+                        <textarea id="adminBookContent" placeholder="Content text OR external link (Project Gutenberg / Open Library link)"></textarea>
+                        <div style="display:flex;gap:8px">
+                            <button id="adminAddBtn">Add Book</button>
+                            <button id="adminResetBtn" class="ghost">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>Upload file (PDF/EPUB) - demo</h4>
+                        <input type="file" id="adminFile" accept=".pdf,application/epub+zip" />
+                        <label>File will be stored as data URL in localStorage for demo only.</label>
+                        <div style="margin-top:8px"><button id="adminUploadBtn">Upload & Create Book</button></div>
+                    </div>
+
+                    <div class="card" style="margin-top:12px">
+                        <h4>Manage Books</h4>
+                        <div id="adminBookList"></div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Sidebar -->
+            <aside class="card">
+                <h3>Quick Links</h3>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                    <a href="#books" onclick="navigate('books')" class="ghost">Browse Books</a>
+                    <a href="#my-library" onclick="navigate('my-library')" class="ghost">My Library</a>
+                    <a href="#contact" onclick="navigate('contact')" class="ghost">Contact Admin</a>
+                </div>
+
+                <hr style="margin:12px 0" />
+
+                <h4>Your Profile</h4>
+                <div id="profileArea" style="min-height:120px">
+                    <p class="muted">Not logged in.</p>
+                </div>
+
+                <hr style="margin:12px 0" />
+
+                <h4>Search</h4>
+                <input id="sideSearch" placeholder="Search books..." />
+                <div style="margin-top:8px"><button onclick="copySideSearch()">Search</button></div>
+            </aside>
+        </div>
+
+        <!-- Reader Modal -->
+        <div id="readerModal" class="modal hidden" style="display:none">
+            <div class="panel">
+                <h3 id="readerTitle">Reader</h3>
+                <div id="readerContent" class="reader"></div>
+                <div style="margin-top:8px;text-align:right">
+                    <button id="closeReaderBtn">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Modal -->
+        <div id="paymentModal" class="modal hidden" style="display:none">
+            <div class="panel">
+                <h3>Payment</h3>
+                <div id="paymentBookInfo"></div>
+                <div class="pay-methods">
+                    <button class="pay-btn pay-mpesa" data-method="mpesa">M-PESA (Simulated)</button>
+                    <button class="pay-btn pay-paypal" data-method="paypal">PayPal</button>
+                    <button class="pay-btn pay-stripe" data-method="stripe">Stripe</button>
+                    <button class="pay-btn pay-card" data-method="card">Card</button>
+                </div>
+
+                <div id="mpesaArea" style="display:none;margin-top:12px">
+                    <label>Phone (international)</label>
+                    <input id="mpesaPhone" placeholder="+2547..." />
+                    <label>Amount (KES)</label>
+                    <input id="mpesaAmount" type="number" />
+                    <label>PIN (SIMULATION ONLY)</label>
+                    <input id="mpesaPin" type="password" />
+                    <div style="margin-top:8px;text-align:right">
+                        <button id="cancelPaymentBtn" class="ghost">Cancel</button>
+                        <button id="confirmMpesaBtn">Pay (Simulated)</button>
+                    </div>
+                </div>
+
+                <div id="otherPayNotice" style="display:none;margin-top:12px">
+                    <p class="muted">You will be redirected to the selected payment provider (demo).</p>
+                    <div style="text-align:right"><button id="closePaymentRedirect" class="ghost">Close</button></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div style="max-width:1100px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center">
+                <div class="contact-grid" style="max-width:420px">
+                    <a class="contact-btn contact-whatsapp" href="https://wa.me/254726570029" target="_blank" title="WhatsApp Admin 1"><i class="fab fa-whatsapp fa-lg"></i></a>
+                    <a class="contact-btn contact-whatsapp" href="https://wa.me/254797596360" target="_blank" title="WhatsApp Admin 2"><i class="fab fa-whatsapp fa-lg"></i></a>
+                    <a class="contact-btn contact-call" href="tel:+254726570029" title="Call Admin 1"><i class="fas fa-phone fa-lg"></i></a>
+                    <a class="contact-btn contact-call" href="tel:+254797596360" title="Call Admin 2"><i class="fas fa-phone fa-lg"></i></a>
+                    <a class="contact-btn contact-email" href="mailto:kangogomartin023@gmail.com" title="Email Admin 1"><i class="fas fa-envelope fa-lg"></i></a>
+                    <a class="contact-btn contact-email" href="mailto:keterdaisy@gmail.com" title="Email Admin 2"><i class="fas fa-envelope fa-lg"></i></a>
+                </div>
+            </div>
+
+            <div class="sponsors">
+                <div class="sponsor1">SPONSORS:</div>
+                <div class="sponsor1">KANGOGO K MARTIN ~ 0726570029</div>
+                <div class="sponsor2">DAISY J KETER ~ 0797596360</div>
+            </div>
+
+            <small>&copy; <span id="nowYear"></span> AGIDA DIGITAL LIBRARY. All rights reserved.</small>
+        </div>
+    </footer>
+
+    <!-- intl-tel-input JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <!-- util.js for formatting (optional) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
+    <script>
+        // ---------- Initialization ----------
+        document.getElementById('nowYear').textContent = new Date().getFullYear();
+
+        // Simple in-browser DB (localStorage keys)
+        // - users: array of user objects
+        // - books: array of books
+        // - borrowedBooks: array
+        // - purchases: object mapping userKey -> [titles]
+        // - progress::<userKey>::<bookId>
+        // Note: In production move to a real backend.
+        function dbGet(key) {
+            try {
+                return JSON.parse(localStorage.getItem(key)) || null
+            } catch (e) {
+                return null
+            }
+        }
+
+        function dbSet(key, val) {
+            localStorage.setItem(key, JSON.stringify(val))
+        }
+
+        function dbInit() {
+            if (!dbGet('users')) dbSet('users', []);
+            if (!dbGet('books')) {
+                // seed with embedded/public examples
+                const seed = [{
+                    id: 'pride_prejudice',
+                    title: 'Pride and Prejudice (excerpts) - Jane Austen',
+                    author: 'Jane Austen',
+                    category: 'Classic',
+                    image: 'https://www.gutenberg.org/cache/epub/1342/pg1342.cover.medium.jpg',
+                    premium: false,
+                    content: 'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\n(More excerpt...)'
+                }, {
+                    id: 'alice_wonder',
+                    title: 'Alice\'s Adventures in Wonderland (excerpt)',
+                    author: 'Lewis Carroll',
+                    category: 'Children',
+                    image: 'https://www.gutenberg.org/cache/epub/11/pg11.cover.medium.jpg',
+                    premium: false,
+                    content: 'Alice was beginning to get very tired of sitting by her sister on the bank...'
+                }, {
+                    id: 'oliver_twist_link',
+                    title: 'Oliver Twist (external - Project Gutenberg)',
+                    author: 'Charles Dickens',
+                    category: 'Classic',
+                    image: 'https://www.gutenberg.org/cache/epub/730/pg730.cover.medium.jpg',
+                    premium: false,
+                    externalLink: 'https://www.gutenberg.org/ebooks/730'
+                }, {
+                    id: 'ai_security_2025',
+                    title: 'Advanced AI Security 2025 (Premium)',
+                    author: 'AGIDA Press',
+                    category: 'Technology',
+                    image: 'https://via.placeholder.com/120x160?text=AI+Security',
+                    premium: true,
+                    price: 150,
+                    content: 'Premium content: Advanced AI Security topics (sample)...'
+                }];
+                dbSet('books', seed);
+            }
+            if (!dbGet('borrowedBooks')) dbSet('borrowedBooks', []);
+            if (!dbGet('purchases')) dbSet('purchases', {});
+        }
+        dbInit();
+
+        // ---------- UI routing helpers ----------
+        const pages = {
+            'home': document.getElementById('homePage'),
+            'books': document.getElementById('booksPage'),
+            'my-library': document.getElementById('myLibraryPage'),
+            'borrowed': document.getElementById('borrowedPage'),
+            'contact': document.getElementById('contactPage'),
+            'login': document.getElementById('loginPage'),
+            'signup': document.getElementById('signupPage'),
+            'admin': document.getElementById('adminPage')
+        };
+
+        function navigate(route) {
+            Object.values(pages).forEach(p => p.style.display = 'none');
+            if (pages[route]) pages[route].style.display = 'block';
+            // update active nav link
+            document.querySelectorAll('#mainNav .nav-link').forEach(a => a.classList.remove('active'));
+            const active = document.querySelector(`#mainNav a[data-route="${route}"]`);
+            if (active) active.classList.add('active');
+            // special protections
+            if (route === 'admin') {
+                const cu = currentUser();
+                if (!cu || cu.role !== 'admin') {
+                    alert('Admin access required.');
+                    navigate('login');
+                    return;
+                }
+            }
+            if (route === 'contact') {
+                const cu = currentUser();
+                if (!cu) {
+                    alert('Please login to contact admins.');
+                    navigate('login');
+                    return;
+                }
+            }
+        }
+
+        // ---------- Auth helpers ----------
+        function currentUser() {
+            return dbGet('currentUser')
+        } // stored as object
+        function setCurrentUser(u) {
+            dbSet('currentUser', u);
+            updateNavForAuth();
+            renderProfile();
+        }
+
+        function clearCurrentUser() {
+            localStorage.removeItem('currentUser');
+            updateNavForAuth();
+            renderProfile();
+        }
+
+        function updateNavForAuth() {
+            const cu = currentUser();
+            document.getElementById('navLogin').style.display = cu ? 'none' : 'inline-block';
+            document.getElementById('navLogout').style.display = cu ? 'inline-block' : 'none';
+            const navAdmin = document.getElementById('navAdmin');
+            if (cu && cu.role === 'admin') navAdmin.style.display = 'inline-block';
+            else navAdmin.style.display = 'none';
+        }
+
+        function renderProfile() {
+            const area = document.getElementById('profileArea');
+            area.innerHTML = '';
+            const cu = currentUser();
+            if (!cu) {
+                area.innerHTML = '<p class="muted">Not logged in.</p>';
+                return;
+            }
+            const div = document.createElement('div');
+            div.innerHTML = `<strong>${escapeHtml(cu.fullname)}</strong> <br/><small class="muted">${escapeHtml(cu.email||cu.Email||'')}</small><br/><small class="muted">Role: ${escapeHtml(cu.role)}</small>`;
+            if (cu.role === 'teacher') div.innerHTML += `<div><small>Subjects: ${escapeHtml(cu.subjects||'')}</small><br/><small>School: ${escapeHtml(cu.school||'')}</small></div>`;
+            if (cu.role === 'parent') div.innerHTML += `<div><small>Registering for: ${escapeHtml(cu.registeringFor||'self')}</small>${cu.childName?'<br/><small>Child: '+escapeHtml(cu.childName)+'</small>':''}</div>`;
+            if (cu.role === 'student') div.innerHTML += `<div><small>Level: ${escapeHtml(cu.level||'')}</small></div>`;
+            if (cu.phone) div.innerHTML += `<div><small>Phone: ${escapeHtml(cu.phone)}</small></div>`;
+            area.appendChild(div);
+        }
+
+        // ---------- Escape helper ----------
+        function escapeHtml(s) {
+            if (!s) return '';
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // ---------- Books UI ----------
+        function loadBooks(filterList) {
+            const list = document.getElementById('bookList');
+            list.innerHTML = '';
+            const books = filterList || dbGet('books') || [];
+            if (books.length === 0) {
+                list.innerHTML = '<p class="muted">No books available.</p>';
+                return;
+            }
+            books.forEach((b, idx) => {
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                if (b.premium) card.classList.add('premium');
+                card.innerHTML = `
+          <img src="${b.image||'https://via.placeholder.com/120x160'}" class="book-cover" alt="${escapeHtml(b.title)}" />
+          <h4 style="margin:6px 0 2px 0">${escapeHtml(b.title)} ${b.premium?'<span class="badge">PREMIUM</span>':''}</h4>
+          <p class="muted" style="font-size:13px;margin:0">${escapeHtml(b.author||'')}</p>
+          <p class="muted" style="font-size:12px;margin:2px 0">${escapeHtml(b.category||'')}</p>
+        `;
+                const readBtn = document.createElement('button');
+                readBtn.textContent = 'Read Online';
+                readBtn.addEventListener('click', () => openReader(b));
+                card.appendChild(readBtn);
+
+                if (b.externalLink) {
+                    const openExt = document.createElement('button');
+                    openExt.className = 'ghost';
+                    openExt.textContent = 'Open external';
+                    openExt.style.marginTop = '6px';
+                    openExt.addEventListener('click', () => window.open(b.externalLink, '_blank'));
+                    card.appendChild(openExt);
+                }
+
+                if (b.premium) {
+                    const buyBtn = document.createElement('button');
+                    buyBtn.style.marginTop = '6px';
+                    const cu = currentUser();
+                    if (cu && userHasPurchased(cuKey(), b.id || b.title)) {
+                        buyBtn.textContent = 'Download (Purchased)';
+                        buyBtn.addEventListener('click', () => downloadBook(b));
+                    } else {
+                        buyBtn.textContent = `Buy (KES ${b.price||0})`;
+                        buyBtn.addEventListener('click', () => openPaymentModal(b));
+                    }
+                    card.appendChild(buyBtn);
+                } else {
+                    const borrowBtn = document.createElement('button');
+                    borrowBtn.textContent = 'Borrow / Download';
+                    borrowBtn.style.marginTop = '6px';
+                    borrowBtn.addEventListener('click', () => borrowBook(b));
+                    card.appendChild(borrowBtn);
+                }
+
+                list.appendChild(card);
+            });
+        }
+
+        function populateCategoryFilter() {
+            const sel = document.getElementById('categoryFilter');
+            const books = dbGet('books') || [];
+            const cats = Array.from(new Set(books.map(b => b.category).filter(Boolean)));
+            sel.innerHTML = '<option value="">All categories</option>';
+            cats.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c;
+                o.textContent = c;
+                sel.appendChild(o);
+            });
+        }
+
+        // search
+        document.getElementById('searchBtn').addEventListener('click', doSearch);
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        function doSearch() {
+            const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+            const cat = (document.getElementById('categoryFilter').value || '').trim();
+            const books = dbGet('books') || [];
+            const results = books.filter(b => {
+                const matchesQ = !q || (b.title && b.title.toLowerCase().includes(q)) || (b.author && b.author.toLowerCase().includes(q));
+                const matchesCat = !cat || b.category === cat;
+                return matchesQ && matchesCat;
+            });
+            navigate('books');
+            loadBooks(results);
+        }
+
+        // side search
+        function copySideSearch() {
+            document.getElementById('searchInput').value = document.getElementById('sideSearch').value;
+            doSearch();
+        }
+
+        // initial load
+        populateCategoryFilter();
+        loadBooks();
+
+        // ---------- Reading / Progress ----------
+        const readerModal = document.getElementById('readerModal');
+        const readerContent = document.getElementById('readerContent');
+        const readerTitle = document.getElementById('readerTitle');
+
+        function openReader(book) {
+            // if premium -> check purchase
+            if (book.premium) {
+                const cu = currentUser();
+                if (!cu) {
+                    alert('Please login to purchase/read premium books.');
+                    navigate('login');
+                    return;
+                }
+                if (!userHasPurchased(cuKey(), book.id || book.title)) {
+                    if (!confirm('This is premium. Purchase now?')) return;
+                    openPaymentModal(book);
+                    return;
+                }
+            }
+            // If book has content: show in reader; if externalLink -> open new tab; if fileData -> embed
+            readerTitle.textContent = book.title;
+            readerContent.innerHTML = '';
+            if (book.fileData) {
+                const iframe = document.createElement('iframe');
+                iframe.src = book.fileData;
+                iframe.style.width = '100%';
+                iframe.style.height = '60vh';
+                readerContent.appendChild(iframe);
+                showReader();
+                return;
+            }
+            if (book.content) {
+                // plain text content show with preserved newlines
+                const pre = document.createElement('pre');
+                pre.style.whiteSpace = 'pre-wrap';
+                pre.style.margin = 0;
+                pre.textContent = book.content;
+                readerContent.appendChild(pre);
+                // restore scroll position for this user+book
+                const key = `progress::${cuKey()}::${book.id||book.title}`;
+                const pos = parseInt(localStorage.getItem(key) || '0', 10);
+                readerContent.scrollTop = pos;
+                // save periodically
+                const saveFn = () => localStorage.setItem(key, readerContent.scrollTop);
+                readerContent.addEventListener('scroll', saveFn);
+                // when close, remove listener
+                document.getElementById('closeReaderBtn').onclick = () => {
+                    localStorage.setItem(key, readerContent.scrollTop);
+                    readerContent.removeEventListener('scroll', saveFn);
+                    hideReader();
+                };
+                showReader();
+                return;
+            }
+            if (book.externalLink) {
+                window.open(book.externalLink, '_blank');
+                return;
+            }
+            alert('No online content available for this book.');
+        }
+
+        function showReader() {
+            readerModal.style.display = 'flex';
+            readerModal.classList.remove('hidden');
+        }
+
+        function hideReader() {
+            readerModal.style.display = 'none';
+            readerModal.classList.add('hidden');
+        }
+
+        document.getElementById('closeReaderBtn').addEventListener('click', hideReader);
+
+        // ---------- Borrowing ----------
+        function borrowBook(book) {
+            const cu = currentUser();
+            if (!cu) {
+                alert('Please login to borrow books.');
+                navigate('login');
+                return;
+            }
+            const borrowed = dbGet('borrowedBooks') || [];
+            borrowed.push({
+                user: cuKey(),
+                bookId: book.id || book.title,
+                title: book.title,
+                date: new Date().toISOString()
+            });
+            dbSet('borrowedBooks', borrowed);
+            alert('Book borrowed!');
+            loadBorrowed();
+            loadMyLibrary();
+        }
+
+        function loadBorrowed() {
+            const el = document.getElementById('borrowList');
+            el.innerHTML = '';
+            const borrowed = dbGet('borrowedBooks') || [];
+            if (borrowed.length === 0) {
+                el.innerHTML = '<p class="muted">No borrowed books.</p>';
+                return;
+            }
+            borrowed.forEach(b => {
+                const book = (dbGet('books') || []).find(x => (x.id || x.title) === b.bookId || x.title === b.title);
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.innerHTML = `<h4>${escapeHtml(b.title)}</h4><p class="muted">Borrowed on: ${new Date(b.date).toLocaleString()}</p>`;
+                if (book) {
+                    const dl = document.createElement('button');
+                    dl.textContent = '⬇ Download / Read';
+                    dl.addEventListener('click', () => openReader(book));
+                    card.appendChild(dl);
+                }
+                el.appendChild(card);
+            });
+        }
+
+        function loadMyLibrary() {
+            const el = document.getElementById('myLibraryList');
+            el.innerHTML = '';
+            const cu = currentUser();
+            if (!cu) {
+                el.innerHTML = '<p class="muted">Log in to see your library.</p>';
+                return;
+            }
+            const borrowed = (dbGet('borrowedBooks') || []).filter(b => b.user === cuKey());
+            if (borrowed.length === 0) {
+                el.innerHTML = '<p class="muted">You have not borrowed any books.</p>';
+                return;
+            }
+            borrowed.forEach(b => {
+                const book = (dbGet('books') || []).find(x => (x.id || x.title) === b.bookId || x.title === b.title);
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.innerHTML = `<h4>${escapeHtml(b.title)}</h4><small class="muted">Borrowed ${new Date(b.date).toLocaleDateString()}</small>`;
+                if (book) {
+                    const readBtn = document.createElement('button');
+                    readBtn.textContent = 'Read Online';
+                    readBtn.addEventListener('click', () => openReader(book));
+                    card.appendChild(readBtn);
+                }
+                el.appendChild(card);
+            });
+        }
+
+        // ---------- Payments (SIMULATED) ----------
+        let purchasePending = null;
+
+        function openPaymentModal(book) {
+            purchasePending = book;
+            document.getElementById('paymentBookInfo').innerHTML = `<strong>${escapeHtml(book.title)}</strong> — KES ${book.price||0}`;
+            document.getElementById('mpesaArea').style.display = 'none';
+            document.getElementById('otherPayNotice').style.display = 'none';
+            document.getElementById('paymentModal').style.display = 'flex';
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        document.querySelectorAll('.pay-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const method = e.target.dataset.method;
+                if (method === 'mpesa') {
+                    document.getElementById('mpesaArea').style.display = 'block';
+                    document.getElementById('otherPayNotice').style.display = 'none';
+                    document.getElementById('mpesaPhone').value = currentUser() && currentUser().phone ? currentUser().phone : '';
+                    document.getElementById('mpesaAmount').value = purchasePending.price || 0;
+                } else {
+                    // Redirect demo
+                    document.getElementById('mpesaArea').style.display = 'none';
+                    document.getElementById('otherPayNotice').style.display = 'block';
+                    // simulate redirect
+                    setTimeout(() => {
+                        alert('Redirecting to ' + method + ' (demo)');
+                        markBookPurchased(purchasePending);
+                        closePaymentModal();
+                    }, 800);
+                }
+            });
+        });
+
+        document.getElementById('cancelPaymentBtn').addEventListener('click', closePaymentModal);
+        document.getElementById('closePaymentRedirect').addEventListener('click', closePaymentModal);
+
+        document.getElementById('confirmMpesaBtn').addEventListener('click', () => {
+            const phone = document.getElementById('mpesaPhone').value.trim();
+            const amount = parseFloat(document.getElementById('mpesaAmount').value || '0');
+            const pin = document.getElementById('mpesaPin').value.trim();
+            if (!phone || !amount || !pin) {
+                alert('Fill phone, amount and PIN (simulation).');
+                return;
+            }
+            if (pin === '0000') {
+                alert('Simulated failure.');
+                return;
+            }
+            // simulate success
+            setTimeout(() => {
+                alert('Payment successful (simulated).');
+                markBookPurchased(purchasePending);
+                closePaymentModal();
+            }, 900);
+        });
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('paymentModal').classList.add('hidden');
+            purchasePending = null;
+            document.getElementById('mpesaPin').value = '';
+            document.getElementById('mpesaPhone').value = '';
+        }
+
+        function markBookPurchased(book) {
+            const p = dbGet('purchases') || {};
+            const key = cuKey();
+            p[key] = p[key] || [];
+            if (!p[key].includes(book.id || book.title)) p[key].push(book.id || book.title);
+            dbSet('purchases', p);
+            loadBooks();
+        }
+
+        function userHasPurchased(userKey, bookIdOrTitle) {
+            const p = dbGet('purchases') || {};
+            return (p[userKey] || []).includes(bookIdOrTitle);
+        }
+
+        function cuKey() {
+            const u = currentUser();
+            if (!u) return 'guest';
+            return u.email || u.Email || u.phone || u.fullname;
+        }
+
+        // ---------- Download helper ----------
+        function downloadBook(book) {
+            if (book.fileData) {
+                const a = document.createElement('a');
+                a.href = book.fileData;
+                a.download = (book.title || 'book').replace(/\s+/g, '_') + '.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else if (book.externalLink) {
+                window.open(book.externalLink, '_blank');
+            } else {
+                alert('Downloaded (demo): ' + book.title);
+            }
+        }
+
+        // ---------- Admin: add / upload / manage ----------
+        document.getElementById('adminBookPremium').addEventListener('change', (e) => {
+            document.getElementById('adminBookPriceWrap').style.display = e.target.checked ? 'block' : 'none';
+        });
+        document.getElementById('adminAddBtn').addEventListener('click', () => {
+            const title = document.getElementById('adminBookTitle').value.trim();
+            const author = document.getElementById('adminBookAuthor').value.trim();
+            const category = document.getElementById('adminBookCategory').value.trim();
+            const image = document.getElementById('adminBookImage').value.trim();
+            const price = parseFloat(document.getElementById('adminBookPrice').value || '0');
+            const premium = document.getElementById('adminBookPremium').checked;
+            const content = document.getElementById('adminBookContent').value.trim();
+            if (!title || !author || !category) {
+                alert('Please fill title, author and category');
+                return;
+            }
+            const books = dbGet('books') || [];
+            books.push({
+                id: 'book_' + Date.now(),
+                title,
+                author,
+                category,
+                image: image || undefined,
+                premium: premium || false,
+                price: premium ? price : undefined,
+                content: content || undefined,
+                externalLink: (content && content.startsWith('http')) ? content : undefined
+            });
+            dbSet('books', books);
+            alert('Book added (demo).');
+            document.getElementById('adminBookTitle').value = '';
+            document.getElementById('adminBookAuthor').value = '';
+            document.getElementById('adminBookCategory').value = '';
+            document.getElementById('adminBookImage').value = '';
+            document.getElementById('adminBookContent').value = '';
+            document.getElementById('adminBookPrice').value = '';
+            populateCategoryFilter();
+            loadBooks();
+            loadAdminList();
+        });
+
+        document.getElementById('adminUploadBtn').addEventListener('click', () => {
+            const fi = document.getElementById('adminFile');
+            if (!fi.files || fi.files.length === 0) {
+                alert('Select a file');
+                return;
+            }
+            const f = fi.files[0];
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const dataURL = ev.target.result;
+                const title = f.name;
+                const books = dbGet('books') || [];
+                books.push({
+                    id: 'book_' + Date.now(),
+                    title,
+                    author: 'Uploaded',
+                    category: 'Uploaded',
+                    image: undefined,
+                    fileData: dataURL,
+                    premium: false
+                });
+                dbSet('books', books);
+                alert('File uploaded (demo).');
+                fi.value = '';
+                populateCategoryFilter();
+                loadBooks();
+                loadAdminList();
+            };
+            reader.readAsDataURL(f);
+        });
+
+        function loadAdminList() {
+            const el = document.getElementById('adminBookList');
+            el.innerHTML = '';
+            const books = dbGet('books') || [];
+            if (books.length === 0) {
+                el.innerHTML = '<p class="muted">No books.</p>';
+                return;
+            }
+            books.forEach((b, i) => {
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                div.style.padding = '6px 0';
+                div.style.borderBottom = '1px solid #eee';
+                const left = document.createElement('div');
+                left.innerHTML = `<strong>${escapeHtml(b.title)}</strong><div class="muted" style="font-size:12px">${escapeHtml(b.author||'')}</div>`;
+                const right = document.createElement('div');
+                const del = document.createElement('button');
+                del.textContent = 'Delete';
+                del.className = 'ghost';
+                del.style.marginRight = '8px';
+                del.addEventListener('click', () => {
+                    if (!confirm('Delete this book?')) return;
+                    books.splice(i, 1);
+                    dbSet('books', books);
+                    populateCategoryFilter();
+                    loadBooks();
+                    loadAdminList();
+                });
+                const preview = document.createElement('button');
+                preview.textContent = 'Preview';
+                preview.addEventListener('click', () => openReader(b));
+                right.appendChild(preview);
+                right.appendChild(del);
+                div.appendChild(left);
+                div.appendChild(right);
+                el.appendChild(div);
+            });
+        }
+
+        // ---------- Signup & Login with intl-tel-input ----------
+        // Initialize intl-tel-input on regPhone input
+        let iti = null;
+        const phoneInput = document.getElementById('regPhone');
+
+        function initIntlTel() {
+            if (phoneInput && !iti) {
+                iti = window.intlTelInput(phoneInput, {
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                    initialCountry: "auto",
+                    geoIpLookup: function(success) {
+                        // best-effort: use ipinfo; if blocked, default to ke
+                        fetch('https://ipinfo.io/json?token=') // empty token; this may fail—it's best-effort
+                            .then(res => res.json())
+                            .then(data => success(data.country))
+                            .catch(() => success('KE'));
+                    },
+                });
+            }
+        }
+        initIntlTel();
+
+        // Show/hide role fields
+        const regRole = document.getElementById('regRole');
+        regRole.addEventListener('change', (e) => {
+            const v = e.target.value;
+            document.getElementById('studentExtras').style.display = v === 'student' ? 'block' : 'none';
+            document.getElementById('teacherExtras').style.display = v === 'teacher' ? 'block' : 'none';
+            document.getElementById('parentExtras').style.display = v === 'parent' ? 'block' : 'none';
+            document.getElementById('adminSecretWrap').style.display = v === 'admin' ? 'block' : 'none';
+            // phone required for admin/teacher/parent
+            document.getElementById('phoneWrap').style.display = (v === 'admin' || v === 'teacher' || v === 'parent') ? 'block' : 'none';
+            // student: if tertiary then show age checkbox
+            document.getElementById('studentLevel').addEventListener('change', (ev) => {
+                const level = ev.target.value;
+                if (level === 'University' || level === 'College' || level === 'Polytechnic') {
+                    document.getElementById('ageCheckWrap').style.display = 'block';
+                } else {
+                    document.getElementById('ageCheckWrap').style.display = 'none';
+                    document.getElementById('phoneWrap').style.display = (regRole.value === 'teacher' || regRole.value === 'admin' || regRole.value === 'parent') ? 'block' : 'none';
+                }
+            });
+        });
+
+        document.getElementById('studentOver18').addEventListener('change', (e) => {
+            if (e.target.checked) document.getElementById('phoneWrap').style.display = 'block';
+            else {
+                if (!(regRole.value === 'admin' || regRole.value === 'teacher' || regRole.value === 'parent')) document.getElementById('phoneWrap').style.display = 'none';
+            }
+        });
+
+        // parent child toggles
+        document.getElementById('parentFor').addEventListener('change', (e) => {
+            document.getElementById('childInfo').style.display = e.target.value === 'child' ? 'block' : 'none';
+        });
+
+        // signup submit
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fullname = document.getElementById('regFullname').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+            if (!fullname || !email || !password || !role) {
+                document.getElementById('signupNotice').textContent = 'Please fill all required fields.';
+                return;
+            }
+            // phone requirement logic
+            let phone = '';
+            if (role === 'admin' || role === 'teacher' || role === 'parent') {
+                if (!iti) {
+                    initIntlTel();
+                }
+                if (iti) {
+                    if (!iti.isValidNumber()) {
+                        document.getElementById('signupNotice').textContent = 'Enter a valid phone number.';
+                        return;
+                    }
+                    phone = iti.getNumber();
+                }
+            } else if (role === 'student') {
+                const level = document.getElementById('studentLevel').value;
+                if (level === 'University' || level === 'College' || level === 'Polytechnic') {
+                    const over18 = document.getElementById('studentOver18').checked;
+                    if (over18) {
+                        if (!iti) {
+                            initIntlTel();
+                        }
+                        if (iti) {
+                            if (!iti.isValidNumber()) {
+                                document.getElementById('signupNotice').textContent = 'Enter a valid phone number.';
+                                return;
+                            }
+                            phone = iti.getNumber();
+                        }
+                    }
+                }
+            }
+            // admin secret demo check
+            if (role === 'admin') {
+                const secret = document.getElementById('adminSecret').value.trim();
+                if (secret !== 'AGIDAADMIN') {
+                    document.getElementById('signupNotice').textContent = 'Invalid admin secret (demo).';
+                    return;
+                }
+            }
+            // store user
+            const users = dbGet('users') || [];
+            if (users.find(u => (u.email && u.email === email) || (u.Email && u.Email === email))) {
+                document.getElementById('signupNotice').textContent = 'Email already exists.';
+                return;
+            }
+            const user = {
+                fullname,
+                email,
+                password,
+                role,
+                phone
+            };
+            // extra fields
+            if (role === 'teacher') {
+                user.subjects = document.getElementById('teacherSubjects').value.trim();
+                user.school = document.getElementById('teacherSchool').value.trim();
+            }
+            if (role === 'parent') {
+                user.registeringFor = document.getElementById('parentFor').value;
+                if (user.registeringFor === 'child') {
+                    user.childName = document.getElementById('childName').value.trim();
+                    user.childLevel = document.getElementById('childLevel').value;
+                }
+            }
+            if (role === 'student') {
+                user.level = document.getElementById('studentLevel').value;
+                user.over18 = document.getElementById('studentOver18').checked;
+            }
+            users.push(user);
+            dbSet('users', users);
+            // auto login
+            setCurrentUser(user);
+            document.getElementById('signupNotice').textContent = 'Account created and logged in.';
+            populateCategoryFilter();
+            loadBooks();
+            loadAdminList();
+            renderProfile();
+            navigate('home');
+        });
+
+        // login
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const role = document.getElementById('loginRole').value;
+            const pass = document.getElementById('loginPassword').value;
+            const users = dbGet('users') || [];
+            // strict match
+            const user = users.find(u => (u.email === email || u.Email === email || u.fullname === email) && u.role === role && u.password === pass);
+            // demo admin backdoor
+            if (role === 'admin' && (email === 'admin' || email === 'admin@agida.com') && pass === 'admin') {
+                const adm = {
+                    fullname: 'Admin',
+                    email: 'admin@agida.com',
+                    role: 'admin',
+                    phone: ''
+                };
+                setCurrentUser(adm);
+                alert('Logged in as admin (demo)');
+                navigate('admin');
+                return;
+            }
+            if (!user) {
+                document.getElementById('loginNotice').textContent = 'Invalid credentials or role mismatch.';
+                return;
+            }
+            // if some other user is signed in, require logout first
+            const cur = currentUser();
+            if (cur && cur.email && cur.email !== user.email) {
+                alert('Another user is currently signed in. Please logout first.');
+                return;
+            }
+            setCurrentUser(user);
+            document.getElementById('loginNotice').textContent = 'Welcome back, ' + user.fullname;
+            loadMyLibrary();
+            loadBorrowed();
+            renderProfile();
+            navigate('home');
+        });
+
+        document.getElementById('toRegister').addEventListener('click', () => navigate('signup'));
+        document.getElementById('cancelSignup').addEventListener('click', () => {
+            document.getElementById('signupForm').reset();
+            navigate('home');
+        });
+
+        function logout() {
+            clearCurrentUser();
+            alert('Logged out');
+            navigate('home');
+        }
+
+        // ---------- Utilities ----------
+        function currentUser() {
+            return dbGet('currentUser');
+        }
+
+        function cuKey() {
+            const u = currentUser();
+            return u ? (u.email || u.Email || u.phone || u.fullname) : 'guest';
+        }
+
+        // ---------- Startup UI Setup ----------
+        updateNavForAuth();
+        renderProfile();
+        loadAdminList();
+        populateCategoryFilter();
+        loadBooks();
+
+        // Protect hash routing to UI navigation
+        window.addEventListener('hashchange', () => {
+            const route = location.hash.replace('#', '') || 'home';
+            navigate(route);
+        });
+
+        // Start on home
+        if (!location.hash) location.hash = '#home';
+        navigate(location.hash.replace('#', '') || 'home');
+
+        // Accessibility: pressing Enter in top search triggers search
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        // Final note: This is a client-side demo. For production:
+        // - Move authentication to server, hash & salt passwords (bcrypt) and don't store them in localStorage.
+        // - Use a backend for file uploads and secure payment integrations (Safaricom Daraja for M-Pesa, PayPal/Stripe server flows).
+        // - Protect admin provisioning server-side (do not rely on client secrets).
+    </script>
+</body>
+
+</html>

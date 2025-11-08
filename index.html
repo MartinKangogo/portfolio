@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kangogo Martin | Software Developer & Data Enthusiast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Properties (Variables) for Easy Theming */
+        :root {
+            /* Light Mode Defaults */
+            --background-color: #fdfdfd; 
+            --text-color: #1a1a1a;       
+            --accent-color: #3B71CA;     /* Deep Blue for Trust/Professionalism */
+            --secondary-background: #f4f4f9; 
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Dark Mode Overrides */
+        body.dark-mode {
+            --background-color: #1a1a1a;
+            --text-color: #f4f4f9;
+            --accent-color: #6D9EEB; /* Lighter Blue for visibility */
+            --secondary-background: #2c2c2c;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --header-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Base Styles and Resets */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            transition: background-color 0.8s, color 0.9s; /* Smooth theme transition */
+        }
+
+        /* Utility Class for Centering Content */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Section Padding */
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        /* Alternate Background Section */
+        .background-dark {
+            background-color: var(--secondary-background);
+        }
+
+        /* --- HEADER AND NAVIGATION --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--background-color);
+            box-shadow: var(--header-shadow);
+            padding: 15px 0;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- BUTTON STYLES --- */
+        .button {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.3s, transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button.primary {
+            background-color: var(--accent-color);
+            color: var(--background-color);
+        }
+
+        .button.primary:hover {
+            background-color: #2F59A3; 
+            transform: translateY(-2px);
+        }
+
+        /* Style for the Dark Mode Toggle Button */
+        #theme-toggle {
+            background: none;
+            color: var(--text-color);
+            font-size: 1.5em;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            margin-left: 15px;
+            line-height: 1; 
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 80vh; 
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+        }
+
+        .hero h2 {
+            font-size: 1.5em;
+            font-weight: 400;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+
+        /* --- SKILLS SECTION --- */
+        .skills-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .skills-list li {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .skills-list li:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        /* --- PROJECTS SECTION --- */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background-color: var(--background-color);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            transition: box-shadow 0.3s, transform 0.3s;
+            border: 1px solid var(--secondary-background);
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .project-card .tech-stack {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .button.secondary {
+            margin-top: 20px;
+            background: none;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .button.secondary:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            transform: none;
+        }
+
+        /* --- CONTACT SECTION --- */
+        #contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #contact-form input,
+        #contact-form textarea {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        #contact-form textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 30px 0;
+            background-color: #1a1a1a;
+            color: #f4f4f9;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .social-links a {
+            color: #f4f4f9;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body id="body">
+
+    <header>
+        <nav class="container">
+            <img src="Profile.jpg" alt="My Portfolio Profile"style="width:50px; border-radius:20px; box-shadow:0 4px 8px rgba(0,0,0,0.2); transition:transform 0.8s ease;"
+     onmouseover="this.style.transform='scale(1.05)';"
+     onmouseout="this.style.transform='scale(1)';">
+            <a href="#" class="logo">K. Martin   </a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Work</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><button id="theme-toggle" aria-label="Toggle dark and light mode">🌙</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="hero" class="hero">
+        <div class="container">
+            <img src="Profile.jpg" alt="My Portfolio Profile"style="width:300px; border-radius:20px; box-shadow:0 4px 8px rgba(0,0,0,0.2); transition:transform 0.8s ease;"
+     onmouseover="this.style.transform='scale(1.05)';"
+     onmouseout="this.style.transform='scale(1)';">
+            <h1>𝐇𝐢, 𝐈 𝐚𝐦 𝐊𝐚𝐧𝐠𝐨𝐠𝐨 𝐌𝐚𝐫𝐭𝐢𝐧🚀</h1>
+            <h2>A 𝐂𝐨𝐦𝐩𝐮𝐭𝐞𝐫 𝐒𝐜𝐢𝐞𝐧𝐜𝐞 𝐒𝐭𝐮𝐝𝐞𝐧𝐭 at Kisii University, specializing in 𝐒𝐨𝐟𝐭𝐰𝐚𝐫𝐞 𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐢𝐧𝐠 & 𝐃𝐚𝐭𝐚 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬</h2>
+            <p>I build elegant, efficient, and secure digital experiences. My focus is on turning complex data into clear, actionable insights.</p>
+            <a href="#projects" class="button primary">𝑽𝒊𝒆𝒘 𝑴𝒚 𝑷𝒓𝒐𝒋𝒆𝒄𝒕𝒔</a>
+        </div>
+    </section>
+
+    <section id="about" class="section-padding fade-item">
+        <div class="container">
+            <h2 class="section-title">𝐖𝐡𝐨 𝐈 𝐀𝐦</h2>
+            <div class="about-content">
+                <p>As a student at 𝐊𝐢𝐬𝐢𝐢 𝐔𝐧𝐢𝐯𝐞𝐫𝐬𝐢𝐭𝐲, I'm driven by the intersection of 𝐂𝐥𝐞𝐚𝐧 𝐂𝐨𝐝𝐞 and 𝐃𝐚𝐭𝐚 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬. My coursework provides a strong theoretical foundation, which I actively apply to personal projects focusing on real-world problems.</p>
+                <p>My approach centers on combining 𝐒𝐭𝐫𝐨𝐧𝐠 𝐎𝐛𝐣𝐞𝐜𝐭 -𝐎𝐫𝐢𝐞𝐧𝐭𝐞𝐝 𝐏𝐫𝐢𝐧𝐜𝐢𝐩𝐥𝐞𝐬 with 𝐄𝐟𝐟𝐞𝐜𝐭𝐢𝐯𝐞 𝐎𝐛𝐣𝐞𝐜𝐭𝐯𝐌𝐚𝐧𝐚𝐠𝐞𝐦𝐞𝐧𝐭 to deliver solutions that are not just functional, but truly scalable and easy to maintain. When I'm not coding, I enjoy 𝐂𝐨𝐦𝐩𝐞𝐭𝐢𝐭𝐢𝐯𝐞 𝐆𝐚𝐦𝐢𝐧𝐠 and 𝐄𝐩𝐥𝐨𝐫𝐢𝐧𝐠 𝐍𝐞𝐰 𝐎𝐩𝐞𝐧-𝐒𝐨𝐮𝐫𝐜𝐞 𝐓𝐞𝐜𝐡𝐧𝐨𝐥𝐨𝐠𝐢𝐞𝐬</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="section-padding background-dark fade-item">
+        <div class="container">
+            <h2 class="section-title">𝐌𝐲 𝐓𝐨𝐨𝐥𝐤𝐢𝐭</h2>
+            <ul class="skills-list">
+                <li>𝐏𝐲𝐭𝐡𝐨𝐧(𝑷𝒓𝒐𝒇𝒊𝒄𝒊𝒆𝒏𝒕)</li>
+                <li>𝐉𝐚𝐯𝐚𝐬𝐜𝐫𝐢𝐩𝐭(𝑽𝒂𝒏𝒏𝒊𝒍𝒂 𝑱𝑺)</li>
+                <li>𝐒𝐐𝐋 (Database Management)</li>
+                <li>𝐇𝐓𝐌𝐋5 & 𝐂𝐒𝐒3</li>
+                <li>𝐃𝐚𝐭𝐚 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬(Pandas)</li>
+                <li>𝐆𝐢𝐭/𝐆𝐢𝐭𝐡𝐮𝐛</li>
+                <li>𝐏𝐫𝐨𝐛𝐥𝐞𝐦 𝐒𝐨𝐥𝐯𝐢𝐧𝐠</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="projects" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="project-grid">
+                           <div class="project-card fade-item">
+                    <h3>𝐏𝐫𝐨𝐣𝐞𝐜𝐭 1: 📚𝐀𝐠𝐢𝐝𝐚 𝐃𝐢𝐠𝐢𝐭𝐚𝐥 𝐋𝐢𝐛𝐫𝐚𝐫𝐲📘</h3>
+                    <p class="tech-stack">𝐓𝐞𝐜𝐡 :  HTML, CSS, JAVASCRIPT</p>
+                    <p>The Book Reservior for Knowledge</p>
+                    <a href="agida.html"class="button secondary">𝐄𝐱𝐩𝐥𝐨𝐫𝐞 𝐓𝐡𝐞 𝐋𝐢𝐛𝐫𝐚𝐫𝐲</a>
+                </div>
+
+                <div class="project-card fade-item">
+                    <h3>𝐏𝐫𝐨𝐣𝐞𝐜𝐭 2: 𝐊𝐢𝐬𝐢𝐢 𝐌𝐚𝐫𝐤𝐞𝐭 𝐏𝐫𝐢𝐜𝐞 𝐏𝐫𝐞𝐝𝐢𝐜𝐭𝐞𝐫📈</h3>
+                    <p class="tech-stack">𝐓𝐞𝐜𝐡 :  Python, Pandas, Scikit-learn, Matplotlib</p>
+                    <p>A machine learning model built to forecast commodity prices in the local market, demonstrating skills in data cleaning and predictive modeling.</p>
+                    <a href="Business.html" class="button secondary">View Analysis</a>
+                </div>
+                
+                <div class="project-card fade-item">
+                    <h3>Project 3: 𝐐𝐮𝐨𝐭𝐞 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐨𝐫(𝑹𝒂𝒏𝒅𝒐𝒎)</h3>
+                    <p class="tech-stack">  𝐓𝐞𝐜𝐡 : 𝑯𝒕𝒎𝒍, 𝑪𝒔𝒔, 𝑱𝒂𝒗𝒂𝒔𝒄𝒓𝒊𝒑𝒕</p>
+                    <p></p>
+                    <a href="quote.html" class="button secondary">𝐕𝐢𝐞𝐰 𝐐𝐮𝐨𝐭𝐞𝐬</a>
+                    
+                </div>
+                         <div class="project-card fade-item">
+                    <h3>Project 4: 🌍 𝐆𝐥𝐨𝐛𝐚𝐥 𝐉𝐨𝐛𝐬 𝐅𝐢𝐧𝐝𝐞𝐫 𝐔𝐥𝐭𝐢𝐦𝐚𝐭𝐞💰💸</h3>
+                    <p class="tech-stack">𝐓𝐞𝐜𝐡: HTML, CSS, Vanilla JavaScript, LocalStorage</p>
+                    <p>Real-time worldwide job search — Remote & in-person jobs — 𝑆𝑐𝑟𝑜𝑙𝑙 𝐷𝑜𝑤𝑛 𝑖𝑛𝑓𝑖𝑛𝑖𝑡𝑒𝑙𝑦 𝑡𝑜 𝑓𝑖𝑛𝑑 𝑦𝑜𝑢𝑟 𝑅𝑒𝑎𝑙𝑙 𝐽𝑜𝑏🥳💰.</p>
+                    <a href="𝐽𝑜𝑏𝑠.html" class="button secondary">𝐂𝐥𝐢𝐜𝐤 𝐌𝐞 𝐓𝐨 𝐅𝐢𝐧𝐝 𝐀 𝐉𝐨𝐛</a>
+                </div>
+                
+
+                <div class="project-card fade-item">
+                    <h3>Project 4: 𝐒𝐭𝐮𝐝𝐞𝐧𝐝 𝐓𝐚𝐬𝐤 𝐎𝐫𝐠𝐚𝐧𝐢𝐳𝐞𝐫(𝑾𝒆𝒃 𝑨𝒑𝒑)</h3>
+                    <p class="tech-stack">𝐓𝐞𝐜𝐡: HTML, CSS, Vanilla JavaScript, LocalStorage</p>
+                    <p>A simple but robust To-Do List application. It uses only the trifecta to manage and persist user data directly in the browser, demonstrating 𝐃𝐎𝐌 𝐌𝐚𝐧𝐢𝐩𝐮𝐥𝐚𝐭𝐢𝐨𝐧</p>
+                    <a href="#" class="button secondary">Live Demo / Code</a>
+                </div>
+
+                <div class="project-card fade-item">
+                    <h3>Project 5: 𝐊𝐢𝐬𝐢𝐢 𝐔𝐧𝐢𝐯𝐞𝐫𝐬𝐢𝐭𝐲 𝐂𝐨𝐮𝐫𝐬𝐞 𝐏𝐥𝐚𝐧𝐧𝐞𝐫📚</h3>
+                    <p class="tech-stack">𝐓𝐞𝐜𝐡 :  HTML, CSS, Responsive Design</p>
+                    <p>A fully responsive, informational website prototype for students to map out course loads, highlighting expertise in 𝐂𝐥𝐞𝐚, 𝐀𝐜𝐜𝐞𝐬𝐬𝐢𝐛𝐥𝐞 𝐅𝐫𝐨𝐧𝐝-𝐄𝐧𝐝 𝐃𝐞𝐬𝐢𝐠𝐧.</p>
+                    <a href="#" class="button secondary">View Design</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section-padding background-dark fade-item">
+        <div class="container">
+            <h2 class="section-title">𝐋𝐞𝐭'𝐬 𝐂𝐨𝐧𝐧𝐞𝐜𝐭</h2>
+            <p>I am currently seeking 𝐈𝐧𝐭𝐞𝐫𝐧𝐬𝐡𝐢𝐩 𝐎𝐩𝐩𝐨𝐫𝐭𝐮𝐧𝐢𝐭𝐢𝐞𝐬 in Software or Data Analysis for 2026 and am always open to collaboration on new open-source projects.</p>
+            <form id="contact-form">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" required></textarea>
+                <button type="submit" class="button primary">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> 𝐊𝐚𝐧𝐠𝐨𝐠𝐨 𝐌𝐚𝐫𝐭𝐢𝐧. 𝐵𝑢𝑖𝑙𝑑 𝑊𝑖𝑡ℎ 𝑇ℎ𝑒 𝑇𝑟𝑖𝑓𝑒𝑐𝑡𝑎.</p>
+            <div class="social-links">
+                <a href="#" aria-label="LinkedIn">In</a>
+                <a href="#" aria-label="GitHub">Gh</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- 1. Automatic Copyright Year Update --- */
+            const currentYearElement = document.getElementById('current-year');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+
+            /* --- 2. Dark Mode Toggle Logic --- */
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.getElementById('body'); 
+
+            // A. Check for saved preference or system preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                body.classList.add('dark-mode');
+                themeToggle.textContent = '☀️'; 
+            } else {
+                themeToggle.textContent = '🌙'; 
+            }
+
+            // B. Add the click listener
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    localStorage.removeItem('theme'); // Optional: remove light preference
+                    themeToggle.textContent = '🌙';
+                }
+            });
+
+            /* --- 3. Scroll-Triggered Fade-In Animations --- */
+            const fadeItems = document.querySelectorAll('.fade-item');
+
+            const observerOptions = {
+                root: null, 
+                rootMargin: '0px',
+                threshold: 0.1 
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            fadeItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>
