@@ -1,1 +1,1 @@
-portfolio-nu-ashy-63.vercel.app
+https://portfolio-nu-ashy-63.vercel.app/
